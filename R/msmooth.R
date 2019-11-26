@@ -1,0 +1,316 @@
+#' Data-driven Nonparametric Regression for the Trend in Equidistant Time Series
+#'
+#' This function runs an iterative plug-in algorithm to find the optimal
+#' bandwidth for the estimation of the nonparametric trend in equidistant
+#' time series (with short memory errors) and then employs the resulting
+#' bandwidth via either local polynomial or kernel regression.
+#'
+#'@param y a numeric vector that contains the input time series ordered from
+#'past to present.
+#'@param p an integer 1 (local linear regression) or 3 (local cubic regression);
+#'represents the order of polynomial within the local polynomial regression
+#'(see also the 'Details' section); is set to \emph{1} by default;
+#'is automatically set to \emph{1} if \emph{method = "kr"}.
+#'@param mu an integer 0, ..., 3 that represents the smoothness parameter of
+#'the kernel weighting function and thus defines the kernel function that will
+#'be used within the local polynomial regression; is set to \emph{1} by
+#'default.
+#'
+#'\tabular{cl}{
+#'\strong{Number} \tab \strong{Kernel}\cr
+#'\emph{0} \tab Uniform Kernel\cr
+#'\emph{1} \tab Epanechnikov Kernel\cr
+#'\emph{2} \tab Bisquare Kernel\cr
+#'\emph{3} \tab Triweight Kernel
+#'}
+#'@param bStart a numeric object that indicates the starting value of the
+#'bandwidth for the iterative process; should be 0 < bStart < 0.5; is set to
+#'\emph{0.15} by default.
+#'@param alg a control parameter (as character) that indicates the
+#'corresponding algorithm used (set to \emph{A} by default).
+#'
+#'\tabular{cl}{
+#'\strong{Algorithm} \tab \strong{Description}\cr
+#'\emph{A} \tab Nonparametric estimation of the variance factor with an
+#'enlarged bandwidth, optimal inflation rate\cr
+#'\emph{B} \tab Nonparametric estimation of the variance factor with an
+#'enlarged bandwidth, naive inflation rate \cr
+#'\emph{O} \tab Nonparametric estimation of the variance factor, optimal
+#'inflation rate\cr
+#'\emph{N} \tab Nonparametric estimation of the variance factor, naive
+#'inflation rate\cr
+#'\emph{OAM} \tab Estimation of the variance factor with ARMA(p,q)-models,
+#'optimal inflation rate\cr
+#'\emph{NAM} \tab Estimation of the variance factor with ARMA(p,q)-models,
+#'naive inflation rate\cr
+#'\emph{OA} \tab Estimation of the variance factor with AR(p)-models, optimal
+#'inflation rate\cr
+#'\emph{NA} \tab Estimation of the variance factor with AR(p)-models, naive
+#'inflation rate\cr
+#'\emph{OM} \tab Estimation of the variance factor with MA(q)-models,
+#'optimal inflation rate\cr
+#'\emph{NM} \tab Estimation of the variance factor with MA(q)-models,
+#'naive inflation rate
+#'}
+#'
+#'It is proposed to use \emph{alg = "A"} only in combination with \emph{p = 1}.
+#'If the user finds that the chosen bandwidth by algortihm \emph{A} is too
+#'small, \emph{alg = "B"} with preferably \emph{p = 3} is suggested. For more
+#'information on the components of the different algorithms, please consult
+#'\code{\link{tsmooth}}.
+#'@param method the smoothing approach; \emph{"lpr"} represents the local
+#'polynomial regression, whereas \emph{"kr"} implements a kernel regression;
+#'is set to \emph{"lpr"} by default.
+#'
+#'@export
+#'
+#'@details
+#'
+#'The trend or its derivatives are estimated based on the additive
+#'nonparametric regression model for a time series
+#'
+#'                      y_[t] = m(x_[t]) + eps_[t],
+#'
+#'where y_[t] is the observed time series, x_[t] is the rescaled time on
+#'[0, 1], m(x_[t]) is a smooth trend function and eps_[t] are stationary errors
+#'with E(eps_[t]) = 0. With this function m(x_[t]) can be estimated
+#'without a parametric model assumption for the error series. Thus, after
+#'estimating and removing the trend, any suitable parametric model, e.g. an
+#'ARMA(p, q) model, can be fitted to the residuals.
+#'
+#'The iterative-plug-in (IPI) algorithm, which numerically minimizes the
+#'Asymptotic Mean Squared Error (AMISE), was proposed by Feng, Gries
+#'and Fritz (2019).
+#'
+#'Define I[m^(k)] = int_[c_[b]]^[d_[b]] [m^(k)(x)]^2 dx,
+#'
+#'beta_[v,k] =  int_[-1]^[1] u^k K(u)du and
+#'
+#'R(K) = int_[-1]^[1] K^2(u)du.
+#'
+#'The AMISE is then
+#'
+#'AMISE(h) = h^(2(k-v)) * ( I[m^(k)]beta^2 / [k]^2 )
+#'         + ( 2pi * c_[f](d_[b]-c_[b])R(K) / nh^(2v+1) )
+#'
+#'with h being the bandwidth, k = p + 1 being the order of kernel, v being the
+#'order of derivative, 0 <= c_[b] < d_[b] <= 1, n being the number of
+#'observations, c_[f] being the variance factor and K_[(v,k)](u) being the k-th
+#'order equivalent kernel obtained for the estimation of m^[(v)] in the
+#'interior. m^[(v)] is the v-th order derivative (v = 0, 1, 2, ...) of the
+#'nonparametric trend.
+#'
+#'The function calculates suitable estimates for c_[f], the variance factor, and
+#'I[m^(k)] over different iterations. In each iteration, a bandwidth is obtained
+#'in accordance with the AMISE that once more serves as an input for the
+#'following iteration. The process repeats until either convergence or the 40th
+#'iteration is reached. For further details on the asymptotic theory or the
+#'algorithm, please consult Feng, Gries and Fritz (2019) or Feng et al. (2019).
+#'
+#'To apply the function, only few arguments are needed: a data input \emph{y},
+#'an order of polynomial \emph{p}, a kernel function defined by the smoothness
+#'parameter \emph{mu}, a starting value for the relative bandwidth \emph{bStart}
+#'and a final smoothing method \emph{method}.
+#'In fact, aside from the input vector \emph{y}, every argument has a default
+#'setting that can be adjusted for the individual case. It is recommended to
+#'initially use the default values for \emph{p}, \emph{alg} and
+#'\emph{bStart} and adjust them in the rare case of the resulting optimal
+#'bandwidth being either too small or too large. Theoretically, the
+#'initial bandwidth does not affect the selected optimal bandwidth. However, in
+#'practice local minima of the AMISE might exist and influence the selected
+#'bandwidth. Therefore, the default setting is \emph{bStart = 0.15}, which is a
+#'compromise between the starting values \emph{bStart = 0.1} for \emph{p = 1}
+#'and \emph{bStart = 0.2} for \emph{p = 3} that were proposed by Feng, Gries
+#'and Fritz (2019). In the rare case of a clearly unsuitable optimal bandwidth,
+#'a starting bandwidth that differs from the default value is a first
+#'possible approach to obtain a better result. Other argument adjustments can
+#'be tried as well. For more specific information on the input arguments
+#'consult the section \emph{Arguments}.
+#'
+#'When applying the function, an optimal bandwidth is obtained based on the
+#'IPI algorithm proposed by Feng, Gries and Fritz (2019). In a second step,
+#'the nonparametric trend of the series is calulated with respect
+#'to the chosen bandwidth and the selected regression method (\emph{lpf} or
+#'\emph{kr}). It is notable that \emph{p} is automatically set to 1 for
+#'\emph{method = "kr"}. The output object is then a list that contains, among
+#'other components, the original time series, the estimated trend values and
+#'the series without the trend.
+#'
+#'The default print method for this function delivers key numbers such as
+#'the iteration steps and the generated optimal bandwidth rounded to the fourth
+#'decimal. The exact numbers and results such as the estimated nonparametric
+#'trend series are saved within the output object and can be addressed via the
+#'\emph{$} sign.
+#'
+#'For more information on the use of this function
+#'
+#'@return The function returns a list with different components:
+#'
+#'\describe{
+#'\item{AR.BIC}{the Bayesian Information Criterion of the optimal AR(p) model
+#'when estimating the variance factor via autoregressive models (if calculated;
+#'calculated for \emph{alg = "OA"} and \emph{alg = "NA"}).}
+#'\item{ARMA.BIC}{the Bayesian Information Criterion of the optimal ARMA(p,q)
+#'model when estimating the variance factor via autoregressive-moving-average
+#'models (if calculated; calculated for \emph{alg = "OAM"} and
+#'\emph{alg = "NAM"}).}
+#'\item{cb}{the percentage of omitted observations on each side of the
+#'observation period; always equal to 0.05.}
+#'\item{b0}{the optimal bandwidth chosen by the IPI-algorithm.}
+#'\item{bb}{the boundary bandwidth method used within the IPI; always equal to
+#'1.}
+#'\item{bStart}{the starting value of the (relative) bandwidth; input argument.}
+#'\item{bvc}{indicates whether an enlarged bandwidth was used for the variance
+#'factor estimation or not; depends on the chosen algorithm.}
+#'\item{cf0}{the estimated variance factor.}
+#'\item{cf0.AR}{the estimated variance factor obtained by estimation of
+#'autoregressive models (if calculated; \emph{alg = "OA"} or \emph{"NA"}).}
+#'\item{cf0.ARMA}{the estimated variance factor obtained by estimation of
+#'autoregressive-moving-average models (if calculated; calculated for
+#'\emph{alg = "OAM"} and \emph{alg = "NAM"}).}
+#'\item{cf0.LW}{the estimated variance factor obtained by Lag-Window Spectral
+#'Density Estimation following Bühlmann (1996) (if calculated; calculated for
+#'algorithms \emph{A}, \emph{B}, \emph{O} and \emph{N}).}
+#'\item{cf0.MA}{the estimated variance factor obtained by estimation of
+#'moving-average models (if calculated; calculated for \emph{alg = "OM"} and
+#'\emph{alg = "NM"}).}
+#'\item{I2}{the estimated value of I[m(k)].}
+#'\item{InfR}{the setting for the inflation rate according to the chosen
+#'algorithm.}
+#'\item{iterations}{the bandwidths of the single iterations steps}
+#'\item{L0.opt}{the optimal bandwidth for the lag-window spectral density
+#'estimation (if calculated; calculated for algorithms \emph{A}, \emph{B},
+#'\emph{O} and \emph{N}).}
+#'\item{MA.BIC}{the Bayesian Information Criterion of the optimal MA(q) model
+#'when estimating the variance factor via moving-average models (if
+#'calculated; calculated for \emph{alg = "OM"} and \emph{alg = "NM"}).}
+#'\item{Mcf}{the estimation method for the variance factor estimation; depends
+#'on the chosen algorithm.}
+#'\item{mu}{the smoothness parameter of the second order kernel; input
+#'argument.}
+#'\item{n}{the number of observations.}
+#'\item{niterations}{the total number of iterations until convergence.}
+#'\item{orig}{the original input series; input argument.}
+#'\item{p.BIC}{the order p of the optimal AR(p) or ARMA(p,q) model when
+#'estimating the variance factor via autoregressive or autoregressive-moving
+#'average models (if calculated; calculated for \emph{alg = "OA"},
+#'\emph{alg = "NA"}, \emph{alg = "OAM"} and \emph{alg = "NAM"}).}
+#'\item{p}{the order of polynomial used in the IPI-algorithm; also used for the
+#'final smoothing, if \emph{method = "lpr"}; input argument.}
+#'\item{q.BIC}{the order q of the optimal MA(q) or ARMA(p,q) model when
+#'estimating the variance factor via moving-average or autoregressive-moving
+#'average models (if calculated; calculated for \emph{alg = "OM"},
+#'\emph{alg = "NM"}, \emph{alg = "OAM"} and \emph{alg = "NAM"}).}
+#'\item{res}{the estimated residual series.}
+#'\item{ye}{the nonparametric estimates of the trend.}
+#'\item{ws}{the weighting systems used within the local polynomial regression;
+#'only exists, if the final smoothing is done via a local polynomial
+#'regression.}
+#'}
+#'
+#'@references
+#' Bühlmann, P. (1996). Locally adaptive lag-window spectral estimation.
+#' Journal of Time Series Analysis, 17(3), 247-270.
+#'
+#' Feng, Y., Gries, T. and Fritz, M. (2019). Data-driven
+#' local polynomial for the trend and its derivatives in economic time
+#' series. Discussion Paper. Paderborn University.
+#'
+#' Feng, Y., Gries, T., Letmathe, S., and Schulz, D. (2019). The smoots package
+#' in R for semiparametric modeling of trend stationary time series. Discussion
+#' Paper. Paderborn University.
+#'
+#'@author
+#'\itemize{
+#'\item Yuanhua Feng (Department of Economics, Paderborn University), \cr
+#'Author of the Algorithms \cr
+#'Website: \url{https://wiwi.uni-paderborn.de/en/dep4/feng/}
+#'\item Dominik Schulz (Student Assistant) (Department of Economics, Paderborn
+#'University), \cr
+#'Package Creator and Maintainer
+#'}
+#'
+#'@examples
+#'### Example 1: US-GDP ###
+#'
+#'# Logarithm of test data
+#'# -> the logarithm of the data is assumed to follow the additive model
+#'test_data <- gdpUS
+#'y <- log(test_data$GDP)
+#'
+#'# Applied msmooth function for the trend
+#'results <- msmooth(y, p = 1, mu = 1, bStart = 0.1, alg = "A", method = "lpr")
+#'res <- results$res
+#'ye <- results$ye
+#'
+#'# Plot of the results
+#'t <- seq(from = 1947, to = 2019.25, by = 0.25)
+#'matplot(t, cbind(y, ye), type = "ll", lty = c(3, 1), col = c(1, 2),
+#'        xlab = "Years", ylab = "Log-Quartlery US-GDP",
+#'        main = "Log-Quarterly US-GDP vs. Trend, Q1 1947 - Q2 2019")
+#'legend("bottomright", legend = c("Original series", "Estimated trend"),
+#'       fill = c(1, 2), cex = 0.7)
+#'results
+#'
+#'\donttest{
+#'### Example 2: German Stock Index ###
+#'
+#'# Obtain log-transformation of the returns
+#'returns <- diff(log(dax$Close))
+#'rt <- returns - mean(returns)
+#'
+#'# Apply 'smoots' function to the log-data
+#'# -> the log-transformation is assumed to follow the additive model
+#'yt <- log(rt^2)
+#'
+#'# Algorithm A delivers better results for local cubic regression in this
+#'# case than the recommended algorithm B.
+#' est <- msmooth(yt, p = 3, alg = "A")
+#' m_xt <- est$ye
+#'
+#'# Obtain the standardized returns 'eps' and the scale function 's'
+#' sqrtC_s <- exp(m_xt / 2)
+#' eps_sqrtC <- rt / sqrtC_s
+#' C <- 1 / var(eps_sqrtC)
+#' eps <- eps_sqrtC * sqrt(C)
+#' s <- sqrtC_s / sqrt(C)
+#'
+#'# -> 'eps' can now be analyzed by any suitable GARCH model.
+#'#    The total volatilities are then the product of the conditional
+#'#    volatilities obtained from 'eps' and the scale function 's'.
+#'}
+
+msmooth <- function (y, p = c(1, 3), mu = c(0, 1, 2, 3), bStart = 0.15,
+                     alg = c("A", "B", "N", "NA", "NAM", "NM", "O", "OA",
+                       "OAM", "OM"),
+                     method = c("lpr", "kr")) {
+
+  if (all(alg == c("A", "B", "N", "NA", "NAM", "NM", "O", "OA",
+                   "OAM", "OM"))) {
+    alg <- "A"
+  }
+  if (all(mu == c(0, 1, 2, 3))) mu <- 1
+  if (all(method == c("lpr", "kr"))) method <- "lpr"
+  if (all(p == c(1, 3)) || method == "kr") p <- 1
+
+  if (!is.numeric(y)) {
+    stop("Input of argument 'y' incorrect. A numeric vector is needed.")
+  }
+  if (!(alg %in% c("A", "B", "N", "NA", "NAM", "NM", "O", "OA",
+                   "OAM", "OM"))) {
+    stop("Input of argument 'alg' incorrect. Algorithm not recognized.")
+  }
+  if (alg == "A" && p == 3) {
+    message("NOTE: Algorithm A is recommended in combination with p = 1.")
+  }
+  if (alg == "B" && p == 1) {
+    message("NOTE: Algorithm B is recommended in combination with p = 3.")
+  }
+
+  result <- tsmooth.Alg(y, p, mu, bStart, alg, method)
+
+  class(result) <- "smoots"
+  attr(result, "function") <- "msmooth"
+
+  result
+}
