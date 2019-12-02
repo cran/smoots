@@ -2,13 +2,21 @@
 % Please edit documentation in R/tsmooth.R
 \name{tsmooth}
 \alias{tsmooth}
-\title{Advanced Data-driven Nonparametric Regression for the Trend in Economic Time
-Series}
+\title{Advanced Data-driven Nonparametric Regression for the Trend in Equidistant
+Time Series}
 \usage{
-tsmooth(y, p = c(1, 3), mu = c(0, 1, 2, 3), Mcf = c("NP", "ARMA",
-  "AR", "MA"), InfR = c("Opt", "Nai", "Var"), bStart = 0.15,
-  bvc = c("Y", "N"), bb = c(0, 1), cb = 0.05, method = c("lpr",
-  "kr"))
+tsmooth(
+  y,
+  p = c(1, 3),
+  mu = c(0, 1, 2, 3),
+  Mcf = c("NP", "ARMA", "AR", "MA"),
+  InfR = c("Opt", "Nai", "Var"),
+  bStart = 0.15,
+  bvc = c("Y", "N"),
+  bb = c(0, 1),
+  cb = 0.05,
+  method = c("lpr", "kr")
+)
 }
 \arguments{
 \item{y}{a numeric vector that contains the time series ordered from past to present.}
@@ -166,10 +174,10 @@ additive model
 
 where y_[t] is the observed time series in question, x_[t] is the rescaled
 time on [0, 1], m(x_[t]) is the nonparametric trend and eps_[t] are the
-errors with E(eps_[t]) = 0. With this function m(x_[t]) can be estimated
-without a parametric model assumption for the error series. Thus, after
-estimating and removing the trend, any suitable parametric model, e.g. an
-ARMA(p, q) model, can be fitted to the residuals.
+errors with E(eps_[t]) = 0 (see also Beran and Feng, 2002). With this
+function m(x_[t]) can be estimated without a parametric model assumption for
+the error series. Thus, after estimating and removing the trend, any suitable
+parametric model, e.g. an ARMA(p, q) model, can be fitted to the residuals.
 
 The iterative-plug-in (IPI) algorithm, which numerically minimizes the
 Asymptotic Mean Squared Error (AMISE), was proposed by Feng, Gries and Fritz
@@ -205,10 +213,10 @@ To apply the function, more arguments are needed compared to the similar
 function \emph{msmooth}: a data input \emph{y}, an order of polynomial
 \emph{p}, a kernel weighting function defined by the smoothness parameter
 \emph{mu}, a variance factor estimation method \emph{Mcf}, an inflation rate
-setting \emph{InfR}, a starting value for the relative bandwidth
-\emph{bStart}, an inflation setting for the variance factor estimation
-\emph{bvc}, a boundary method \emph{bb}, a boundary cut-off percentage
-\emph{cb} and a final smoothing method \emph{method}.
+setting \emph{InfR} (see also Beran and Feng, 2002), a starting value for the
+relative bandwidth \emph{bStart}, an inflation setting for the variance
+factor estimation \emph{bvc}, a boundary method \emph{bb}, a boundary cut-off
+percentage \emph{cb} and a final smoothing method \emph{method}.
 In fact, aside from the input vector \emph{y}, every argument has a default
 setting that can be adjusted for the individual case. Theoretically, the
 initial bandwidth does not affect the selected optimal bandwidth. However, in
@@ -282,22 +290,26 @@ C <- 1 / var(eps_sqrtC)
 eps <- eps_sqrtC * sqrt(C)
 s <- sqrtC_s / sqrt(C)
 
-# -> 'eps' can now be analyzed by any suitable GARCH model.
+# -> 'eps' can now be analyzed by any suitable GARCH-type model.
 #    The total volatilities are then the product of the conditional
 #    volatilities obtained from 'eps' and the scale function 's'.
 }
 }
 \references{
+Beran, J. and Feng, Y. (2002). Local polynomial fitting with long-memory,
+short-memory and antipersistent errors. Annals of the Institute of
+Statistical Mathematics, 54(2), 291-311.
+
 Bühlmann, P. (1996). Locally adaptive lag-window spectral estimation.
 Journal of Time Series Analysis, 17(3), 247-270.
 
 Feng, Y., Gries, T. and Fritz, M. (2019). Data-driven
 local polynomial for the trend and its derivatives in economic time
-series. Discussion Paper. Paderborn University.
+series. Discussion Paper. Paderborn University. (Not yet pubslished)
 
-Feng, Y., Gries, T., Letmathe, S., and Schulz, D. (2019). The smoots package
+Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
 in R for semiparametric modeling of trend stationary time series. Discussion
-Paper. Paderborn University.
+Paper. Paderborn University. (Not yet published)
 }
 \author{
 \itemize{

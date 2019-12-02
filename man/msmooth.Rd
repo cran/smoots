@@ -4,9 +4,14 @@
 \alias{msmooth}
 \title{Data-driven Nonparametric Regression for the Trend in Equidistant Time Series}
 \usage{
-msmooth(y, p = c(1, 3), mu = c(0, 1, 2, 3), bStart = 0.15,
+msmooth(
+  y,
+  p = c(1, 3),
+  mu = c(0, 1, 2, 3),
+  bStart = 0.15,
   alg = c("A", "B", "N", "NA", "NAM", "NM", "O", "OA", "OAM", "OM"),
-  method = c("lpr", "kr"))
+  method = c("lpr", "kr")
+)
 }
 \arguments{
 \item{y}{a numeric vector that contains the input time series ordered from
@@ -150,10 +155,10 @@ nonparametric regression model for a time series
 
 where y_[t] is the observed time series, x_[t] is the rescaled time on
 [0, 1], m(x_[t]) is a smooth trend function and eps_[t] are stationary errors
-with E(eps_[t]) = 0. With this function m(x_[t]) can be estimated
-without a parametric model assumption for the error series. Thus, after
-estimating and removing the trend, any suitable parametric model, e.g. an
-ARMA(p, q) model, can be fitted to the residuals.
+with E(eps_[t]) = 0 (see also Beran and Feng, 2002). With this function
+m(x_[t]) can be estimated without a parametric model assumption for the error
+series. Thus, after estimating and removing the trend, any suitable
+parametric model, e.g. an ARMA(p, q) model, can be fitted to the residuals.
 
 The iterative-plug-in (IPI) algorithm, which numerically minimizes the
 Asymptotic Mean Squared Error (AMISE), was proposed by Feng, Gries
@@ -266,22 +271,26 @@ C <- 1 / var(eps_sqrtC)
 eps <- eps_sqrtC * sqrt(C)
 s <- sqrtC_s / sqrt(C)
 
-# -> 'eps' can now be analyzed by any suitable GARCH model.
+# -> 'eps' can now be analyzed by any suitable GARCH-type model.
 #    The total volatilities are then the product of the conditional
 #    volatilities obtained from 'eps' and the scale function 's'.
 }
 }
 \references{
+Beran, J. and Feng, Y. (2002). Local polynomial fitting with long-memory,
+short-memory and antipersistent errors. Annals of the Institute of
+Statistical Mathematics, 54(2), 291-311.
+
 Bühlmann, P. (1996). Locally adaptive lag-window spectral estimation.
 Journal of Time Series Analysis, 17(3), 247-270.
 
 Feng, Y., Gries, T. and Fritz, M. (2019). Data-driven
 local polynomial for the trend and its derivatives in economic time
-series. Discussion Paper. Paderborn University.
+series. Discussion Paper. Paderborn University. (Not yet published)
 
-Feng, Y., Gries, T., Letmathe, S., and Schulz, D. (2019). The smoots package
+Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
 in R for semiparametric modeling of trend stationary time series. Discussion
-Paper. Paderborn University.
+Paper. Paderborn University. (Not yet published)
 }
 \author{
 \itemize{

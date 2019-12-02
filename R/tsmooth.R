@@ -1,5 +1,5 @@
-#' Advanced Data-driven Nonparametric Regression for the Trend in Economic Time
-#' Series
+#' Advanced Data-driven Nonparametric Regression for the Trend in Equidistant
+#' Time Series
 #'
 #' This function runs an iterative plug-in algorithm to find the optimal
 #' bandwidth for the estimation of the nonparametric trend in equidistant
@@ -84,10 +84,10 @@
 #'
 #'where y_[t] is the observed time series in question, x_[t] is the rescaled
 #'time on [0, 1], m(x_[t]) is the nonparametric trend and eps_[t] are the
-#'errors with E(eps_[t]) = 0. With this function m(x_[t]) can be estimated
-#'without a parametric model assumption for the error series. Thus, after
-#'estimating and removing the trend, any suitable parametric model, e.g. an
-#'ARMA(p, q) model, can be fitted to the residuals.
+#'errors with E(eps_[t]) = 0 (see also Beran and Feng, 2002). With this
+#'function m(x_[t]) can be estimated without a parametric model assumption for
+#'the error series. Thus, after estimating and removing the trend, any suitable
+#'parametric model, e.g. an ARMA(p, q) model, can be fitted to the residuals.
 #'
 #'The iterative-plug-in (IPI) algorithm, which numerically minimizes the
 #'Asymptotic Mean Squared Error (AMISE), was proposed by Feng, Gries and Fritz
@@ -123,10 +123,10 @@
 #'function \emph{msmooth}: a data input \emph{y}, an order of polynomial
 #'\emph{p}, a kernel weighting function defined by the smoothness parameter
 #'\emph{mu}, a variance factor estimation method \emph{Mcf}, an inflation rate
-#'setting \emph{InfR}, a starting value for the relative bandwidth
-#'\emph{bStart}, an inflation setting for the variance factor estimation
-#'\emph{bvc}, a boundary method \emph{bb}, a boundary cut-off percentage
-#'\emph{cb} and a final smoothing method \emph{method}.
+#'setting \emph{InfR} (see also Beran and Feng, 2002), a starting value for the
+#'relative bandwidth \emph{bStart}, an inflation setting for the variance
+#'factor estimation \emph{bvc}, a boundary method \emph{bb}, a boundary cut-off
+#'percentage \emph{cb} and a final smoothing method \emph{method}.
 #'In fact, aside from the input vector \emph{y}, every argument has a default
 #'setting that can be adjusted for the individual case. Theoretically, the
 #'initial bandwidth does not affect the selected optimal bandwidth. However, in
@@ -221,16 +221,20 @@
 #'@export
 #'
 #'@references
+#' Beran, J. and Feng, Y. (2002). Local polynomial fitting with long-memory,
+#' short-memory and antipersistent errors. Annals of the Institute of
+#' Statistical Mathematics, 54(2), 291-311.
+#'
 #' Bühlmann, P. (1996). Locally adaptive lag-window spectral estimation.
 #' Journal of Time Series Analysis, 17(3), 247-270.
 #'
 #' Feng, Y., Gries, T. and Fritz, M. (2019). Data-driven
 #' local polynomial for the trend and its derivatives in economic time
-#' series. Discussion Paper. Paderborn University.
+#' series. Discussion Paper. Paderborn University. (Not yet pubslished)
 #'
-#' Feng, Y., Gries, T., Letmathe, S., and Schulz, D. (2019). The smoots package
+#' Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
 #' in R for semiparametric modeling of trend stationary time series. Discussion
-#' Paper. Paderborn University.
+#' Paper. Paderborn University. (Not yet published)
 #'
 #'@author
 #'\itemize{
@@ -286,7 +290,7 @@
 #' eps <- eps_sqrtC * sqrt(C)
 #' s <- sqrtC_s / sqrt(C)
 #'
-#'# -> 'eps' can now be analyzed by any suitable GARCH model.
+#'# -> 'eps' can now be analyzed by any suitable GARCH-type model.
 #'#    The total volatilities are then the product of the conditional
 #'#    volatilities obtained from 'eps' and the scale function 's'.
 #'}
@@ -377,6 +381,8 @@ tsmooth <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
      c2 <- (1 - 2 * cb) * Rp / (mukp)^2
 
      steps <- rep(NA, 40)
+     bd_func <- lookup$InfR_lookup[as.character(p), InfR][[1]]
+     bv_func <- lookup$bvc_lookup[as.character(p), mu + 1][[1]]
 
      # The main iteration------------------------------------------------------
 
@@ -388,7 +394,7 @@ tsmooth <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
          if (i == 1) {bold <- bStart} else {bold <- bopt}
 
          # Look up the EIM inflation rate in the internal list 'lookup'
-         bd <- lookup$InfR_lookup[as.character(p), InfR][[1]](bold)
+         bd <- bd_func(bold)
 
          if (bd >= 0.49) {bd <- 0.49}
          yed <- gsmooth(y, k, pd, mu, bd, bb)$ye
@@ -398,7 +404,7 @@ tsmooth <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
          if (bvc == "Y") {
 
            # Look up the enlarged bandwidth
-           bv <- lookup$bvc_lookup[as.character(p), mu + 1][[1]](bold)
+           bv <- bv_func(bold)
 
          } else {bv <- bold}
 

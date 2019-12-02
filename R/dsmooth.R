@@ -130,11 +130,11 @@
 #'@references
 #' Feng, Y., Gries, T. and Fritz, M. (2019). Data-driven
 #' local polynomial for the trend and its derivatives in economic time
-#' series. Discussion Paper. Paderborn University.
+#' series. Discussion Paper. Paderborn University. (Not yet publshed)
 #'
-#' Feng, Y., Gries, T., Letmathe, S., and Schulz, D. (2019). The smoots package
+#' Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
 #' in R for semiparametric modeling of trend stationary time series. Discussion
-#' Paper. Paderborn University.
+#' Paper. Paderborn University. (Not yet published)
 #'
 #'@author
 #'\itemize{
@@ -230,6 +230,7 @@ dsmooth <- function(y, d = c(1, 2), mu = c(0, 1, 2, 3), pp = c(1, 3),
   c2 <- (1 - 2 * cb) * Rp / (mukp) ** 2
 
   steps <- rep(NA, 40)
+  bd2_func <- lookup$InfR2_lookup[d, InfR][[1]]
 
   # The main iteration---------------------------------------------------------
 
@@ -241,7 +242,7 @@ dsmooth <- function(y, d = c(1, 2), mu = c(0, 1, 2, 3), pp = c(1, 3),
       if (i == 1) {bold <- bStart} else {bold <- bopt}
 
       # Look up EIM inflation rates from the lookup table
-      bd <- lookup$InfR2_lookup[d, InfR][[1]](bold)
+      bd <- bd2_func(bold)
 
       if (bd >= 0.49) {bd <- 0.49}
       yed <- gsmooth(y, k, pd, mu, bd, bb)$ye

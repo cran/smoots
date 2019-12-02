@@ -37,7 +37,7 @@ print.smoots <- function(x, ...) {
       cat("| Results of the nonparametric trend estimation |", fill = TRUE)
       cat("-------------------------------------------------", fill = TRUE)
       cat("Method: Local Polynomial Regression", fill = TRUE)
-      result_vector <- c(x$n, x$niterations, round(x$b0, 4))
+      result_vector <- c(as.character(x$n), x$niterations, round(x$b0, 4))
       result_dataframe <- data.frame(result_vector)
       rnames_dataframe <- c("Number of observations:",
         "Iterations until convergence:", "Optimal bandwidth by IPI:")
@@ -48,7 +48,8 @@ print.smoots <- function(x, ...) {
 
       cat("Iterative plug-in algorithm:", fill = TRUE)
       cat("----------------------------")
-      ipi_vec <- c(x$bStart, x$p, x$mu, x$Mcf, x$bvc, x$InfR, x$bb, x$cb)
+      ipi_vec <- c(x$bStart, x$p, x$mu, x$Mcf, x$bvc, x$InfR,
+                   x$bb, x$cb)
       ipi_df <- data.frame(ipi_vec)
       rnames_ipi <- c("Bandwidth starting value:", "Order of polynomial:",
                       "Smoothness parameter:",
@@ -67,7 +68,7 @@ print.smoots <- function(x, ...) {
       colnames(abbr) <- ""
       rownames(abbr) <- c("Estimates:", "Original series:", "Residuals:",
         "Weights:", "Optimal bandwidth:", "Estimated variance factor:")
-      print.data.frame(abbr)
+      print.data.frame(abbr, right = FALSE)
       cat(" ", fill = TRUE)
       cat("Iterations:", fill = TRUE)
       cat("-----------", fill = TRUE)
@@ -79,7 +80,7 @@ print.smoots <- function(x, ...) {
       cat("| Results of the nonparametric trend estimation |", fill = TRUE)
       cat("-------------------------------------------------", fill = TRUE)
       cat("Method: Kernel Regression", fill = TRUE)
-      result_vector <- c(x$n, x$niterations, round(x$b0, 4))
+      result_vector <- c(as.character(x$n), x$niterations, round(x$b0, 4))
       result_dataframe <- data.frame(result_vector)
       rnames_dataframe <- c("Number of observations:",
         "Iterations until convergence:", "Optimal bandwidth by IPI:")
@@ -90,16 +91,18 @@ print.smoots <- function(x, ...) {
 
       cat("Iterative plug-in algorithm:", fill = TRUE)
       cat("----------------------------")
-      ipi_vec <- c(x$bStart, x$p, x$mu, x$Mcf, x$bvc, x$InfR)
+      ipi_vec <- c(x$bStart, x$p, x$mu, x$Mcf, x$bvc, x$InfR,
+                   x$bb, x$cb)
       ipi_df <- data.frame(ipi_vec)
       rnames_ipi <- c("Bandwidth starting value:", "Order of polynomial:",
                       "Smoothness parameter:",
                       "Variance factor estimation:",
                       "Enlarged bandwidth (var. factor):",
-                      "Inflation rate:")
+                      "Inflation rate:", "Boundary method:",
+                      "Boundary cut-off:")
       colnames(ipi_df) <- ""
       rownames(ipi_df) <- rnames_ipi
-      print.data.frame(ipi_df)
+      print.data.frame(ipi_df, right = FALSE)
 
         cat("", fill = TRUE)
         cat("Components of the object ($):", fill = TRUE)
@@ -109,7 +112,7 @@ print.smoots <- function(x, ...) {
         colnames(abbr) <- ""
         rownames(abbr) <- c("Estimates:", "Original series:", "Residuals:",
                             "Optimal bandwidth:", "Estimated variance factor:")
-        print.data.frame(abbr)
+        print.data.frame(abbr, right = FALSE)
         cat(" ", fill = TRUE)
         cat("Iterations:", fill = TRUE)
         cat("-----------", fill = TRUE)
@@ -122,7 +125,8 @@ print.smoots <- function(x, ...) {
       cat("| Results of the nonparametric derivative estimation |", fill = TRUE)
       cat("------------------------------------------------------", fill = TRUE)
       cat("Method: Local Polynomial Regression", fill = TRUE)
-      result_vector <- c(x$deriv, x$n, x$niterations, round(x$b0, 4))
+      result_vector <- c(as.character(x$deriv), x$n, x$niterations,
+                         round(x$b0, 4))
       result_dataframe <- data.frame(result_vector)
       rnames_dataframe <- c("Order of derivative:", "Number of observations:",
         "Iterations until convergence:", "Optimal bandwidth by IPI:")
@@ -153,7 +157,7 @@ print.smoots <- function(x, ...) {
       colnames(abbr) <- ""
       rownames(abbr) <- c("Estimates:", "Original series:", "Weights:",
                           "Optimal bandwidth:", "Estimated variance factor:")
-      print.data.frame(abbr)
+      print.data.frame(abbr, right = FALSE)
       cat(" ", fill = TRUE)
       cat("Iterations:", fill = TRUE)
       cat("-----------", fill = TRUE)
@@ -172,7 +176,7 @@ print.smoots <- function(x, ...) {
     cat("-------------------------------------------", fill = TRUE)
     if (attr(x, "function") == "gsmooth") {
       cat("Method: Local Polynomial Regression", fill = TRUE)
-      result_vec <- c(round(c(x$n, x$v, x$p, x$mu, x$b), digits = 4), k_nearest)
+      result_vec <- c(x$n, x$v, x$p, x$mu, x$b, k_nearest)
       result_name <- c("Number of observations:", "Order of derivative:",
                        "Order of polynomial:", "Smoothness parameter:",
                        "Bandwidth:", "k-nearest:")
@@ -189,11 +193,11 @@ print.smoots <- function(x, ...) {
       colnames(abbr) <- ""
       rownames(abbr) <- c("Estimates:", "Original series:", "Residuals:",
                           "Bandwidth:", "Weighting system:")
-      print.data.frame(abbr)
+      print.data.frame(abbr, right = FALSE)
 
     } else if (attr(x, "function") == "knsmooth") {
       cat("Method: Kernel Regression", fill = TRUE)
-      result_vec <- c(round(c(x$n, 0,  x$mu, x$b), digits = 4), k_nearest)
+      result_vec <- c(x$n, 0, x$mu, x$b, k_nearest)
       result_name <- c("Number of observations:", "Order of derivative:",
                        "Smoothness parameter:", "Bandwidth:", "k-nearest:")
       result_df <- data.frame(result_vec)
@@ -209,7 +213,7 @@ print.smoots <- function(x, ...) {
       colnames(abbr) <- ""
       rownames(abbr) <- c("Estimates:", "Original series:", "Residuals:",
                           "Bandwidth:")
-      print.data.frame(abbr)
+      print.data.frame(abbr, right = FALSE)
     }
   }
 

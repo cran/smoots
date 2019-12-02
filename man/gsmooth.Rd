@@ -99,7 +99,7 @@ nonparametric regression model for a time series
 
 where y_[t] is the observed time series, x_[t] is the rescaled time on
 [0, 1], m(x_[t]) is a smooth trend function and eps_[t] are stationary errors
-with E(eps_[t]) = 0.
+with E(eps_[t]) = 0 (see also Beran and Feng, 2002).
 
 This function is part of the package \emph{smoots} and is used in
 the field of analysing equidistant time series data. It applies the local
@@ -134,13 +134,17 @@ title(sub = expression(italic("Figure 1")), col.sub = "gray47",
 
 }
 \references{
+Beran, J. and Feng, Y. (2002). Local polynomial fitting with long-memory,
+short-memory and antipersistent errors. Annals of the Institute of
+Statistical Mathematics, 54(2), 291-311.
+
 Feng, Y., Gries, T. and Fritz, M. (2019). Data-driven
 local polynomial for the trend and its derivatives in economic time
-series. Discussion Paper. Paderborn University.
+series. Discussion Paper. Paderborn University. (Not yet published)
 
-Feng, Y., Gries, T., Letmathe, S., and Schulz, D. (2019). The smoots package
+Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
 in R for semiparametric modeling of trend stationary time series. Discussion
-Paper. Paderborn University.
+Paper. Paderborn University. (Not yet published)
 }
 \author{
 \itemize{

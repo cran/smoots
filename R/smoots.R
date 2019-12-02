@@ -51,11 +51,11 @@
 #'@references
 #' Feng, Y., Gries, T. and Fritz, M. (2019). Data-driven
 #' local polynomial for the trend and its derivatives in economic time
-#' series. Discussion Paper. Paderborn University.
+#' series. Discussion Paper. Paderborn University. (Not yet published)
 #'
-#' Feng, Y., Gries, T., Letmathe, S., and Schulz, D. (2019). The smoots package
+#' Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
 #' in R for semiparametric modeling of trend stationary time series. Discussion
-#' Paper. Paderborn University.
+#' Paper. Paderborn University. (Not yet published)
 #'
 #'@author
 #'\itemize{

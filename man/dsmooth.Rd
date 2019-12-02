@@ -4,8 +4,14 @@
 \alias{dsmooth}
 \title{Data-driven Local Polynomial for the Trend's Derivatives in Equidistant Time Series}
 \usage{
-dsmooth(y, d = c(1, 2), mu = c(0, 1, 2, 3), pp = c(1, 3),
-  bStart.p = 0.15, bStart = 0.15)
+dsmooth(
+  y,
+  d = c(1, 2),
+  mu = c(0, 1, 2, 3),
+  pp = c(1, 3),
+  bStart.p = 0.15,
+  bStart = 0.15
+)
 }
 \arguments{
 \item{y}{a numeric vector that contains the time series ordered from past to present.}
@@ -161,11 +167,11 @@ result_d
 \references{
 Feng, Y., Gries, T. and Fritz, M. (2019). Data-driven
 local polynomial for the trend and its derivatives in economic time
-series. Discussion Paper. Paderborn University.
+series. Discussion Paper. Paderborn University. (Not yet publshed)
 
-Feng, Y., Gries, T., Letmathe, S., and Schulz, D. (2019). The smoots package
+Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
 in R for semiparametric modeling of trend stationary time series. Discussion
-Paper. Paderborn University.
+Paper. Paderborn University. (Not yet published)
 }
 \author{
 \itemize{

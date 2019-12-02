@@ -4,8 +4,7 @@
 \alias{plot.smoots}
 \title{Plot Method for the Package 'smoots'}
 \usage{
-\method{plot}{smoots}(x, type = "l", main = NULL, xlab = NULL,
-  ylab = NULL, ...)
+\method{plot}{smoots}(x, type = "l", main = NULL, xlab = NULL, ylab = NULL, ...)
 }
 \arguments{
 \item{x}{an input object of class \emph{smoots}.}
