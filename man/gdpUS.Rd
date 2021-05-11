@@ -4,13 +4,15 @@
 \name{gdpUS}
 \alias{gdpUS}
 \title{Quarterly US GDP, Q1 1947 to Q2 2019}
-\format{A data frame with 290 rows and 3 variables:
+\format{
+A data frame with 290 rows and 3 variables:
 \describe{
   \item{Year}{the observation year}
   \item{Quarter}{the observation quarter in the given year}
   \item{GDP}{the Gross Domestic Product of the US in billions of chained
-  2012 US Dollars}
-}}
+  2012 US Dollars (annual rate)}
+}
+}
 \source{
 The data was obtained from the Federal Reserve Bank of St. Louis.
 

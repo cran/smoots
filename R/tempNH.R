@@ -1,7 +1,7 @@
 #' Mean Monthly Northern Hemisphere Temperature Changes
 #'
-#' A dataset that contains seasonally adjusted mean monthly Northern Hemisphere temperature
-#' changes from 1880 to 2018.
+#' A dataset that contains mean monthly Northern Hemisphere temperature
+#' changes from 1880 to 2018. The base period is 1951 to 1980.
 #'
 #' @format A data frame with 1668 rows and 3 variables:
 #' \describe{

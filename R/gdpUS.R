@@ -9,7 +9,7 @@
 #'   \item{Year}{the observation year}
 #'   \item{Quarter}{the observation quarter in the given year}
 #'   \item{GDP}{the Gross Domestic Product of the US in billions of chained
-#'   2012 US Dollars}
+#'   2012 US Dollars (annual rate)}
 #' }
 #' @source The data was obtained from the Federal Reserve Bank of St. Louis.
 #'

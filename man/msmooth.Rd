@@ -2,7 +2,8 @@
 % Please edit documentation in R/msmooth.R
 \name{msmooth}
 \alias{msmooth}
-\title{Data-driven Nonparametric Regression for the Trend in Equidistant Time Series}
+\title{Data-driven Nonparametric Regression for the Trend in Equidistant Time
+Series}
 \usage{
 msmooth(
   y,
@@ -17,106 +18,111 @@ msmooth(
 \item{y}{a numeric vector that contains the input time series ordered from
 past to present.}
 
-\item{p}{an integer 1 (local linear regression) or 3 (local cubic regression);
-represents the order of polynomial within the local polynomial regression
-(see also the 'Details' section); is set to \emph{1} by default;
-is automatically set to \emph{1} if \emph{method = "kr"}.}
+\item{p}{an integer \code{1} (local linear regression) or \code{3} (local
+cubic regression); represents the order of polynomial within the local
+polynomial regression (see also the 'Details' section); is set to \code{1}
+by default; is automatically set to \code{1} if \code{method = "kr"}.}
 
-\item{mu}{an integer 0, ..., 3 that represents the smoothness parameter of
-the kernel weighting function and thus defines the kernel function that will
-be used within the local polynomial regression; is set to \emph{1} by
-default.
+\item{mu}{an integer \code{0}, ..., \code{3} that represents the smoothness
+parameter of the kernel weighting function and thus defines the kernel
+function that will be used within the local polynomial regression; is set
+to \code{1} by default.
 
 \tabular{cl}{
 \strong{Number} \tab \strong{Kernel}\cr
-\emph{0} \tab Uniform Kernel\cr
-\emph{1} \tab Epanechnikov Kernel\cr
-\emph{2} \tab Bisquare Kernel\cr
-\emph{3} \tab Triweight Kernel
+\code{0} \tab Uniform Kernel\cr
+\code{1} \tab Epanechnikov Kernel\cr
+\code{2} \tab Bisquare Kernel\cr
+\code{3} \tab Triweight Kernel
 }}
 
 \item{bStart}{a numeric object that indicates the starting value of the
-bandwidth for the iterative process; should be 0 < bStart < 0.5; is set to
-\emph{0.15} by default.}
+bandwidth for the iterative process; should be \eqn{> 0}; is set to
+\code{0.15} by default.}
 
 \item{alg}{a control parameter (as character) that indicates the
-corresponding algorithm used (set to \emph{A} by default).
+corresponding algorithm used (set to \code{"A"} by default for \code{p = 1}
+and to \code{"B"} for \code{p = 3}).
 
 \tabular{cl}{
 \strong{Algorithm} \tab \strong{Description}\cr
-\emph{A} \tab Nonparametric estimation of the variance factor with an
+\code{"A"} \tab Nonparametric estimation of the variance factor with an
 enlarged bandwidth, optimal inflation rate\cr
-\emph{B} \tab Nonparametric estimation of the variance factor with an
+\code{"B"} \tab Nonparametric estimation of the variance factor with an
 enlarged bandwidth, naive inflation rate \cr
-\emph{O} \tab Nonparametric estimation of the variance factor, optimal
+\code{"O"} \tab Nonparametric estimation of the variance factor, optimal
 inflation rate\cr
-\emph{N} \tab Nonparametric estimation of the variance factor, naive
+\code{"N"} \tab Nonparametric estimation of the variance factor, naive
 inflation rate\cr
-\emph{OAM} \tab Estimation of the variance factor with ARMA(p,q)-models,
-optimal inflation rate\cr
-\emph{NAM} \tab Estimation of the variance factor with ARMA(p,q)-models,
-naive inflation rate\cr
-\emph{OA} \tab Estimation of the variance factor with AR(p)-models, optimal
-inflation rate\cr
-\emph{NA} \tab Estimation of the variance factor with AR(p)-models, naive
-inflation rate\cr
-\emph{OM} \tab Estimation of the variance factor with MA(q)-models,
-optimal inflation rate\cr
-\emph{NM} \tab Estimation of the variance factor with MA(q)-models,
-naive inflation rate
+\code{"OAM"} \tab Estimation of the variance factor with
+ARMA(\eqn{p,q})-models, optimal inflation rate\cr
+\code{"NAM"} \tab Estimation of the variance factor with
+ARMA(\eqn{p,q})-models, naive inflation rate\cr
+\code{"OA"} \tab Estimation of the variance factor with
+AR(\eqn{p})-models, optimal inflation rate\cr
+\code{"NA"} \tab Estimation of the variance factor with
+AR(\eqn{p})-models, naive inflation rate\cr
+\code{"OM"} \tab Estimation of the variance factor with
+MA(\eqn{q})-models, optimal inflation rate\cr
+\code{"NM"} \tab Estimation of the variance factor with
+MA(\eqn{q})-models, naive inflation rate
 }
 
-It is proposed to use \emph{alg = "A"} only in combination with \emph{p = 1}.
-If the user finds that the chosen bandwidth by algortihm \emph{A} is too
-small, \emph{alg = "B"} with preferably \emph{p = 3} is suggested. For more
+It is proposed to use \code{alg = "A"} in combination with \code{p = 1}.
+If the user finds that the chosen bandwidth by algorithm \code{"A"} is too
+small, \code{alg = "B"} with preferably \code{p = 3} is suggested. For more
 information on the components of the different algorithms, please consult
 \code{\link{tsmooth}}.}
 
-\item{method}{the smoothing approach; \emph{"lpr"} represents the local
-polynomial regression, whereas \emph{"kr"} implements a kernel regression;
-is set to \emph{"lpr"} by default.}
+\item{method}{the smoothing approach; \code{"lpr"} represents the local
+polynomial regression, whereas \code{"kr"} implements a kernel regression;
+is set to \code{"lpr"} by default.}
 }
 \value{
 The function returns a list with different components:
 
 \describe{
-\item{AR.BIC}{the Bayesian Information Criterion of the optimal AR(p) model
-when estimating the variance factor via autoregressive models (if calculated;
-calculated for \emph{alg = "OA"} and \emph{alg = "NA"}).}
-\item{ARMA.BIC}{the Bayesian Information Criterion of the optimal ARMA(p,q)
-model when estimating the variance factor via autoregressive-moving-average
-models (if calculated; calculated for \emph{alg = "OAM"} and
-\emph{alg = "NAM"}).}
+\item{AR.BIC}{the Bayesian Information Criterion of the optimal AR(\eqn{p})
+model when estimating the variance factor via autoregressive models
+(if calculated; calculated for \code{alg = "OA"} and \code{alg = "NA"}).}
+\item{ARMA.BIC}{the Bayesian Information Criterion of the optimal
+ARMA(\eqn{p,q}) model when estimating the variance factor via
+autoregressive-moving-average models (if calculated; calculated for
+\code{alg = "OAM"} and \code{alg = "NAM"}).}
 \item{cb}{the percentage of omitted observations on each side of the
 observation period; always equal to 0.05.}
 \item{b0}{the optimal bandwidth chosen by the IPI-algorithm.}
 \item{bb}{the boundary bandwidth method used within the IPI; always equal to
 1.}
-\item{bStart}{the starting value of the (relative) bandwidth; input argument.}
+\item{bStart}{the starting value of the (relative) bandwidth; input
+argument.}
 \item{bvc}{indicates whether an enlarged bandwidth was used for the variance
 factor estimation or not; depends on the chosen algorithm.}
-\item{cf0}{the estimated variance factor.}
+\item{cf0}{the estimated variance factor; in contrast to the definitions
+given in the \emph{Details} section, this object actually contains an
+estimated value of \eqn{2\pi c_f}, i.e. it corresponds to the estimated sum
+of autocovariances.}
 \item{cf0.AR}{the estimated variance factor obtained by estimation of
-autoregressive models (if calculated; \emph{alg = "OA"} or \emph{"NA"}).}
+autoregressive models (if calculated; \code{alg = "OA"} or \code{"NA"}).}
 \item{cf0.ARMA}{the estimated variance factor obtained by estimation of
 autoregressive-moving-average models (if calculated; calculated for
-\emph{alg = "OAM"} and \emph{alg = "NAM"}).}
+\code{alg = "OAM"} and \code{alg = "NAM"}).}
 \item{cf0.LW}{the estimated variance factor obtained by Lag-Window Spectral
 Density Estimation following Bühlmann (1996) (if calculated; calculated for
-algorithms \emph{A}, \emph{B}, \emph{O} and \emph{N}).}
+algorithms \code{"A"}, \code{"B"}, \code{"O"} and \code{"N"}).}
 \item{cf0.MA}{the estimated variance factor obtained by estimation of
-moving-average models (if calculated; calculated for \emph{alg = "OM"} and
-\emph{alg = "NM"}).}
-\item{I2}{the estimated value of I[m(k)].}
+moving-average models (if calculated; calculated for \code{alg = "OM"} and
+\code{alg = "NM"}).}
+\item{I2}{the estimated value of \eqn{I[m^{(k)}]}{I[m^(k)]}.}
 \item{InfR}{the setting for the inflation rate according to the chosen
 algorithm.}
 \item{iterations}{the bandwidths of the single iterations steps}
 \item{L0.opt}{the optimal bandwidth for the lag-window spectral density
-estimation (if calculated; calculated for algorithms \emph{A}, \emph{B},
-\emph{O} and \emph{N}).}
-\item{MA.BIC}{the Bayesian Information Criterion of the optimal MA(q) model
-when estimating the variance factor via moving-average models (if
-calculated; calculated for \emph{alg = "OM"} and \emph{alg = "NM"}).}
+estimation (if calculated; calculated for algorithms \code{"A"}, \code{"B"},
+\code{"O"} and \code{"N"}).}
+\item{MA.BIC}{the Bayesian Information Criterion of the optimal MA(\eqn{q})
+model when estimating the variance factor via moving-average models (if
+calculated; calculated for \code{alg = "OM"} and \code{alg = "NM"}).}
 \item{Mcf}{the estimation method for the variance factor estimation; depends
 on the chosen algorithm.}
 \item{mu}{the smoothness parameter of the second order kernel; input
@@ -124,21 +130,36 @@ argument.}
 \item{n}{the number of observations.}
 \item{niterations}{the total number of iterations until convergence.}
 \item{orig}{the original input series; input argument.}
-\item{p.BIC}{the order p of the optimal AR(p) or ARMA(p,q) model when
-estimating the variance factor via autoregressive or autoregressive-moving
-average models (if calculated; calculated for \emph{alg = "OA"},
-\emph{alg = "NA"}, \emph{alg = "OAM"} and \emph{alg = "NAM"}).}
+\item{p.BIC}{the order p of the optimal AR(\eqn{p}) or ARMA(\eqn{p,q}) model
+when estimating the variance factor via autoregressive or
+autoregressive-moving average models (if calculated; calculated for
+\code{alg = "OA"}, \code{alg = "NA"}, \code{alg = "OAM"} and
+\code{alg = "NAM"}).}
 \item{p}{the order of polynomial used in the IPI-algorithm; also used for the
-final smoothing, if \emph{method = "lpr"}; input argument.}
-\item{q.BIC}{the order q of the optimal MA(q) or ARMA(p,q) model when
-estimating the variance factor via moving-average or autoregressive-moving
-average models (if calculated; calculated for \emph{alg = "OM"},
-\emph{alg = "NM"}, \emph{alg = "OAM"} and \emph{alg = "NAM"}).}
+final smoothing, if \code{method = "lpr"}; input argument.}
+\item{q.BIC}{the order \eqn{q} of the optimal MA(\eqn{q}) or ARMA(\eqn{p,q})
+model when estimating the variance factor via moving-average or
+autoregressive-moving average models (if calculated; calculated for
+\code{alg = "OM"},
+\code{alg = "NM"}, \code{alg = "OAM"} and \code{alg = "NAM"}).}
 \item{res}{the estimated residual series.}
+\item{v}{the considered order of derivative of the trend; is always zero for
+this function.}
+\item{ws}{the weighting system matrix used within the local polynomial
+regression; this matrix is a condensed version of a complete weighting system
+matrix; in each row of \code{ws}, the weights for conducting the smoothing
+procedure at a specific observation time point can be found; the first
+\eqn{[nb + 0.5]} rows, where \eqn{n} corresponds to the number of
+observations, \eqn{b} is the bandwidth considered for smoothing and
+\eqn{[.]} denotes the integer part, contain the weights at the
+\eqn{[nb + 0.5]} left-hand boundary points; the weights in row
+\eqn{[nb + 0.5] + 1} are representative for the estimation at all
+interior points and the remaining rows contain the weights for the right-hand
+boundary points; each row has exactly \eqn{2[nb + 0.5] + 1} elements,
+more specifically the weights for observations of the nearest
+\eqn{2[nb + 0.5] + 1} time points; moreover, the weights are normalized,
+i.e. the sum of the elements of any row is \eqn{1}.}
 \item{ye}{the nonparametric estimates of the trend.}
-\item{ws}{the weighting systems used within the local polynomial regression;
-only exists, if the final smoothing is done via a local polynomial
-regression.}
 }
 }
 \description{
@@ -148,73 +169,80 @@ time series (with short memory errors) and then employs the resulting
 bandwidth via either local polynomial or kernel regression.
 }
 \details{
-The trend or its derivatives are estimated based on the additive
-nonparametric regression model for a time series
-
-                     y_[t] = m(x_[t]) + eps_[t],
-
-where y_[t] is the observed time series, x_[t] is the rescaled time on
-[0, 1], m(x_[t]) is a smooth trend function and eps_[t] are stationary errors
-with E(eps_[t]) = 0 (see also Beran and Feng, 2002). With this function
-m(x_[t]) can be estimated without a parametric model assumption for the error
-series. Thus, after estimating and removing the trend, any suitable
-parametric model, e.g. an ARMA(p, q) model, can be fitted to the residuals.
+The trend is estimated based on the additive
+nonparametric regression model for an equidistant time series
+\deqn{y_t = m(x_t) + \epsilon_t,}
+where \eqn{y_t} is the observed time series, \eqn{x_t} is the rescaled time
+on the interval \eqn{[0, 1]}, \eqn{m(x_t)} is a smooth and deterministic
+trend function and \eqn{\epsilon_t} are stationary errors with
+\eqn{E(\epsilon_t) = 0} and short-range dependence (see also Beran and Feng,
+2002). With this function \eqn{m(x_t)} can be estimated without a parametric
+model assumption for the error series. Thus, after estimating and removing
+the trend, any suitable parametric model, e.g. an ARMA(\eqn{p,q}) model, can
+be fitted to the residuals (see \code{\link[stats]{arima}}).
 
 The iterative-plug-in (IPI) algorithm, which numerically minimizes the
 Asymptotic Mean Squared Error (AMISE), was proposed by Feng, Gries
-and Fritz (2019).
+and Fritz (2020).
 
-Define I[m^(k)] = int_[c_[b]]^[d_[b]] [m^(k)(x)]^2 dx,
+Define \eqn{I[m^{(k)}] = \int_{c_b}^{d_b} [m^{(k)}(x)]^2 dx}{I[m^(k)] =
+int_[c_b]^[d_b] \{m^(k)\}^2 dx}, \eqn{\beta_{(\nu, k)} = \int_{-1}^{1} u^k
+K_{(\nu, k)}(u) du}{\beta_(\nu, k) = int_[-1]^[1] u^k K_(\nu, k)(u) du}
+and \eqn{R(K) = \int_{-1}^{1} K_{(\nu, k)}^{2}(u) du}{R(K) = int_[-1]^[1]
+\{K_(\nu, k)\}^2 du}, where \eqn{p} is the order of the polynomial,
+\eqn{k = p + 1} is the order of the asymptotically equivalent kernel,
+\eqn{\nu} is the order of the trend function's derivative, \eqn{0 \leq c_{b}
+< d_{b} \leq 1}{0 \le c_b < d_b \le 1}, \eqn{c_f} is the variance factor and
+\eqn{K_{(\nu, k)}(u)}{K_(\nu, k)(u)} the \eqn{k}-th order equivalent kernel
+obtained for the estimation of \eqn{m^{(\nu)}}{m^(\nu)} in the interior.
+\eqn{m^{(\nu)}}{m^(\nu)} is the \eqn{\nu}-th order derivative (\eqn{\nu = 0,
+1, 2, ...}) of the nonparametric trend.
 
-beta_[v,k] =  int_[-1]^[1] u^k K(u)du and
-
-R(K) = int_[-1]^[1] K^2(u)du.
-
+Furthermore, we define
+\deqn{C_{1} = \frac{I[m^{(k)}] \beta_{(\nu, k)}^2}{(k!)^2}}{C_1 =
+[I[m^(k)]\{\beta_(\nu, k)\}^2] / (k!)^2}
+and
+\deqn{C_{2} = \frac{2 \pi c_{f} (d_b - c_b) R(K).}{nh^{2 \nu + 1}}}{C_2 =
+2\pi(d_b - c_b)R(K)c_f.}
 The AMISE is then
+\deqn{AMISE(h) = h^{2(k-\nu)}C_{1} + C_{2}}{AMISE(h) = h^[2(k - \nu)] C_1 +
+C_2}
+with \eqn{h} being the bandwidth.
 
-AMISE(h) = h^(2(k-v)) * ( I[m^(k)]beta^2 / [k]^2 )
-        + ( 2pi * c_[f](d_[b]-c_[b])R(K) / nh^(2v+1) )
+The function calculates suitable estimates for \eqn{c_f}, the variance
+factor, and \eqn{I[m^{(k)}]}{I[m^(k)]} over different iterations. In each
+iteration, a bandwidth is obtained in accordance with the AMISE that once
+more serves as an input for the following iteration. The process repeats
+until either convergence or the 40th iteration is reached. For further
+details on the asymptotic theory or the algorithm, please consult Feng,
+Gries and Fritz (2020) or Feng et al. (2019).
 
-with h being the bandwidth, k = p + 1 being the order of kernel, v being the
-order of derivative, 0 <= c_[b] < d_[b] <= 1, n being the number of
-observations, c_[f] being the variance factor and K_[(v,k)](u) being the k-th
-order equivalent kernel obtained for the estimation of m^[(v)] in the
-interior. m^[(v)] is the v-th order derivative (v = 0, 1, 2, ...) of the
-nonparametric trend.
-
-The function calculates suitable estimates for c_[f], the variance factor, and
-I[m^(k)] over different iterations. In each iteration, a bandwidth is obtained
-in accordance with the AMISE that once more serves as an input for the
-following iteration. The process repeats until either convergence or the 40th
-iteration is reached. For further details on the asymptotic theory or the
-algorithm, please consult Feng, Gries and Fritz (2019) or Feng et al. (2019).
-
-To apply the function, only few arguments are needed: a data input \emph{y},
-an order of polynomial \emph{p}, a kernel function defined by the smoothness
-parameter \emph{mu}, a starting value for the relative bandwidth \emph{bStart}
-and a final smoothing method \emph{method}.
-In fact, aside from the input vector \emph{y}, every argument has a default
+To apply the function, only few arguments are needed: a data input \code{y},
+an order of polynomial \code{p}, a kernel function defined by the smoothness
+parameter \code{mu}, a starting value for the relative bandwidth
+\code{bStart} and a final smoothing method \code{method}.
+In fact, aside from the input vector \code{y}, every argument has a default
 setting that can be adjusted for the individual case. It is recommended to
-initially use the default values for \emph{p}, \emph{alg} and
-\emph{bStart} and adjust them in the rare case of the resulting optimal
+initially use the default values for \code{p}, \code{alg} and
+\code{bStart} and adjust them in the rare case of the resulting optimal
 bandwidth being either too small or too large. Theoretically, the
 initial bandwidth does not affect the selected optimal bandwidth. However, in
 practice local minima of the AMISE might exist and influence the selected
-bandwidth. Therefore, the default setting is \emph{bStart = 0.15}, which is a
-compromise between the starting values \emph{bStart = 0.1} for \emph{p = 1}
-and \emph{bStart = 0.2} for \emph{p = 3} that were proposed by Feng, Gries
-and Fritz (2019). In the rare case of a clearly unsuitable optimal bandwidth,
+bandwidth. Therefore, the default setting is \code{bStart = 0.15}, which is a
+compromise between the starting values \code{bStart = 0.1} for \code{p = 1}
+and \code{bStart = 0.2} for \code{p = 3} that were proposed by Feng, Gries
+and Fritz (2020). In the rare case of a clearly unsuitable optimal bandwidth,
 a starting bandwidth that differs from the default value is a first
 possible approach to obtain a better result. Other argument adjustments can
 be tried as well. For more specific information on the input arguments
 consult the section \emph{Arguments}.
 
 When applying the function, an optimal bandwidth is obtained based on the
-IPI algorithm proposed by Feng, Gries and Fritz (2019). In a second step,
-the nonparametric trend of the series is calulated with respect
-to the chosen bandwidth and the selected regression method (\emph{lpf} or
-\emph{kr}). It is notable that \emph{p} is automatically set to 1 for
-\emph{method = "kr"}. The output object is then a list that contains, among
+IPI algorithm proposed by Feng, Gries and Fritz (2020). In a second step,
+the nonparametric trend of the series is calculated with respect
+to the chosen bandwidth and the selected regression method (\code{lpf} or
+\code{kr}). It is notable that \code{p} is automatically set to 1 for
+\code{method = "kr"}. The output object is then a list that contains, among
 other components, the original time series, the estimated trend values and
 the series without the trend.
 
@@ -222,9 +250,14 @@ The default print method for this function delivers key numbers such as
 the iteration steps and the generated optimal bandwidth rounded to the fourth
 decimal. The exact numbers and results such as the estimated nonparametric
 trend series are saved within the output object and can be addressed via the
-\emph{$} sign.
+\code{$} sign.
 
-For more information on the use of this function
+NOTE:
+
+With package version 1.1.0, this function implements C++ code by means
+of the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
+\code{\link[RcppArmadillo:RcppArmadillo-package]{RcppArmadillo}} packages for
+better performance.
 }
 \examples{
 ### Example 1: US-GDP ###
@@ -241,39 +274,48 @@ ye <- results$ye
 
 # Plot of the results
 t <- seq(from = 1947, to = 2019.25, by = 0.25)
-matplot(t, cbind(y, ye), type = "ll", lty = c(3, 1), col = c(1, 2),
-       xlab = "Years", ylab = "Log-Quartlery US-GDP",
-       main = "Log-Quarterly US-GDP vs. Trend, Q1 1947 - Q2 2019")
+matplot(t, cbind(y, ye), type = "ll", lty = c(3, 1), col = c(1, "red"),
+ xlab = "Years", ylab = "Log-Quartlery US-GDP",
+ main = "Log-Quarterly US-GDP vs. Trend, Q1 1947 - Q2 2019")
 legend("bottomright", legend = c("Original series", "Estimated trend"),
-      fill = c(1, 2), cex = 0.7)
+ fill = c(1, "red"), cex = 0.7)
 results
 
-\donttest{
+\dontrun{
 ### Example 2: German Stock Index ###
 
-# Obtain log-transformation of the returns
-returns <- diff(log(dax$Close))
-rt <- returns - mean(returns)
+# The following procedure can be considered, if (log-)returns are assumed
+# to follow a model from the general class of semiparametric GARCH-type
+# models (including Semi-GARCH, Semi-Log-GARCH and Semi-APARCH models among
+# others) with a slowly changing variance over time due to a deterministic,
+# nonparametric scale function.
 
-# Apply 'smoots' function to the log-data
-# -> the log-transformation is assumed to follow the additive model
-yt <- log(rt^2)
+# Obtain the logarithm of the squared returns
+returns <- diff(log(dax$Close))   # (log-)returns
+rt <- returns - mean(returns)     # demeaned (log-)returns
+yt <- log(rt^2)                   # logarithm of the squared returns
 
-# Algorithm A delivers better results for local cubic regression in this
-# case than the recommended algorithm B.
+# Apply 'smoots' function to the log-data, because the logarithm of
+# the squared returns follows an additive model with a nonparametric trend
+# function, if the returns are assumed to follow a semiparametric GARCH-type
+# model.
+
+# In this case, the setting 'alg = "A"' is used in combination with p = 3, as
+# the resulting estimates appear to be more suitable than for 'alg = "B"'.
 est <- msmooth(yt, p = 3, alg = "A")
-m_xt <- est$ye
+m_xt <- est$ye                    # estimated trend values
 
-# Obtain the standardized returns 'eps' and the scale function 's'
-sqrtC_s <- exp(m_xt / 2)
-eps_sqrtC <- rt / sqrtC_s
-C <- 1 / var(eps_sqrtC)
-eps <- eps_sqrtC * sqrt(C)
-s <- sqrtC_s / sqrt(C)
+# Obtain the standardized returns 'eps' and the scale function 'scale.f'
+res <- est$res                    # the detrended log-data
+C <- -log(mean(exp(res)))         # an estimate of a constant value needed
+                                  # for the retransformation
+scale.f <- exp((m_xt - C) / 2)    # estimated values of the scale function in
+                                  # the returns
+eps <- rt / scale.f               # the estimated standardized returns
 
 # -> 'eps' can now be analyzed by any suitable GARCH-type model.
 #    The total volatilities are then the product of the conditional
-#    volatilities obtained from 'eps' and the scale function 's'.
+#    volatilities obtained from 'eps' and the scale function 'scale.f'.
 }
 }
 \references{
@@ -284,20 +326,20 @@ Statistical Mathematics, 54(2), 291-311.
 Bühlmann, P. (1996). Locally adaptive lag-window spectral estimation.
 Journal of Time Series Analysis, 17(3), 247-270.
 
-Feng, Y., Gries, T. and Fritz, M. (2019). Data-driven
+Feng, Y., Gries, T. and Fritz, M. (2020). Data-driven
 local polynomial for the trend and its derivatives in economic time
-series. Discussion Paper. Paderborn University. (Not yet published)
+series. Journal of Nonparametric Statistics, 32:2, 510-533.
 
 Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
 in R for semiparametric modeling of trend stationary time series. Discussion
-Paper. Paderborn University. (Not yet published)
+Paper. Paderborn University. Unpublished.
 }
 \author{
 \itemize{
 \item Yuanhua Feng (Department of Economics, Paderborn University), \cr
 Author of the Algorithms \cr
 Website: \url{https://wiwi.uni-paderborn.de/en/dep4/feng/}
-\item Dominik Schulz (Student Assistant) (Department of Economics, Paderborn
+\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
 University), \cr
 Package Creator and Maintainer
 }

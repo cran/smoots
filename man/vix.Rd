@@ -4,7 +4,8 @@
 \name{vix}
 \alias{vix}
 \title{CBOE Volatility Index (VIX) Financial Time Series Data}
-\format{A data frame with 7452 rows and 9 variables:
+\format{
+A data frame with 7452 rows and 9 variables:
 \describe{
   \item{Year}{the observation year}
   \item{Month}{the observation month}
@@ -15,7 +16,8 @@
   \item{Close}{the closing price of the day}
   \item{AdjClose}{the adjusted closing price of the day}
   \item{Volume}{the traded volume}
-}}
+}
+}
 \source{
 The data was obtained from Yahoo Finance.
 

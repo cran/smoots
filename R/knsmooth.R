@@ -3,45 +3,47 @@
 #' This function estimates the nonparametric trend function in an equidistant
 #' time series with Nadaraya-Watson kernel regression.
 #'
-#' @param y a numeric vector that contains the time series data ordered from past to present.
-#' @param mu an integer 0, 1, 2, ... that represents the smoothness parameter
-#' of the second order kernel function that will be used; is set to \emph{1} by
-#' default.
+#' @param y a numeric vector that contains the time series data ordered from
+#' past to present.
+#' @param mu an integer \code{0}, \code{1}, \code{2}, ... that represents the
+#' smoothness parameter of the second order kernel function that will be used;
+#' is set to \code{1} by default.
 #'
 #'\tabular{cl}{
-#'\strong{Number (mu)} \tab \strong{Kernel}\cr
-#'\emph{0} \tab Uniform Kernel\cr
-#'\emph{1} \tab Epanechnikov Kernel\cr
-#'\emph{2} \tab Bisquare Kernel\cr
-#'\emph{3} \tab Triweight Kernel\cr
-#'\emph{...} \tab ...
+#'\strong{Number (\code{mu})} \tab \strong{Kernel}\cr
+#'\code{0} \tab Uniform Kernel\cr
+#'\code{1} \tab Epanechnikov Kernel\cr
+#'\code{2} \tab Bisquare Kernel\cr
+#'\code{3} \tab Triweight Kernel\cr
+#'\code{...} \tab ...
 #' }
-#' @param b a real number 0 < b < 0.5; represents the relative bandwidth that
-#' will be used for the smoothing process; is set to \emph{0.15} by default.
-#' @param bb can be set to 0 or 1; the parameter controlling the bandwidth used
-#' at the boundary; is set to \emph{0} by default.
+#' @param b a real number \eqn{0 <} \code{b} \eqn{< 0.5}; represents the
+#' relative bandwidth that will be used for the smoothing process; is set to
+#' \code{0.15} by default.
+#' @param bb can be set to \code{0} or \code{1}; the parameter controlling the
+#' bandwidth used at the boundary; is set to \code{0} by default.
 #'
 #' \tabular{cl}{
-#' \strong{Number (bb)} \tab \strong{Estimation procedure at boundary points}\cr
-#' \emph{0} \tab Fixed bandwidth on one side with possible large
+#' \strong{Number (\code{bb})} \tab \strong{Estimation procedure at boundary
+#' points}\cr
+#' \code{0} \tab Fixed bandwidth on one side with possible large
 #' bandwidth on the other side at the boundary\cr
-#' \emph{1} \tab The k-nearest neighbor method will be used
+#' \code{1} \tab The k-nearest neighbor method will be used
 #' }
 #'
 #'@export
 #'
 #'@details
 #'
-#'The trend or its derivatives are estimated based on the additive
-#'nonparametric regression model for a time series
+#'The trend is estimated based on the additive
+#'nonparametric regression model for an equidistant time series
+#'\deqn{y_t = m(x_t) + \epsilon_t,}
+#'where \eqn{y_t} is the observed time series, \eqn{x_t} is the rescaled time
+#'on the interval \eqn{[0, 1]}, \eqn{m(x_t)} is a smooth and deterministic
+#'trend function and \eqn{\epsilon_t} are stationary errors with
+#'\eqn{E(\epsilon_t) = 0}.
 #'
-#'                      y_[t] = m(x_[t]) + eps_[t],
-#'
-#'where y_[t] is the observed time series, x_[t] is the rescaled time on
-#'[0, 1], m(x_[t]) is a smooth trend function and eps_[t] are stationary errors
-#'with E(eps_[t]) = 0.
-#'
-#'This function is part of the package \emph{smoots} and is used for
+#'This function is part of the package \code{smoots} and is used for
 #'the estimation of trends in equidistant time series. The applied method
 #'is a kernel regression with arbitrarily selectable second order
 #'kernel, relative bandwidth and boundary method. Especially the chosen
@@ -71,7 +73,7 @@
 #'\item Yuanhua Feng (Department of Economics, Paderborn University), \cr
 #'Author of the Algorithms \cr
 #'Website: \url{https://wiwi.uni-paderborn.de/en/dep4/feng/}
-#'\item Dominik Schulz (Student Assistant) (Department of Economics, Paderborn
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
 #'University), \cr
 #'Package Creator and Maintainer
 #'}
@@ -88,20 +90,47 @@
 #'# Plot of the results
 #'t <- seq(from = 1947, to = 2019.25, by = 0.25)
 #'plot(t, y, type = "l", xlab = "Year", ylab = "log(US-GDP)", bty = "n",
-#'     lwd = 2,
-#'     main = "Estimated trend for log-quarterly US-GDP, Q1 1947 - Q2 2019")
-#'points(t, trend1, type = "l", col = 2, lwd = 1)
-#'points(t, trend2, type = "l", col = 4, lwd = 1)
+#'  lwd = 2,
+#'  main = "Estimated trend for log-quarterly US-GDP, Q1 1947 - Q2 2019")
+#'points(t, trend1, type = "l", col = "red", lwd = 1)
+#'points(t, trend2, type = "l", col = "blue", lwd = 1)
 #'legend("bottomright", legend = c("Trend (b = 0.28)", "Trend (b = 0.05)"),
-#'      fill = c(2, 4), cex = 0.6)
+#'  fill = c("red", "blue"), cex = 0.6)
 #'title(sub = expression(italic("Figure 1")), col.sub = "gray47",
-#'      cex.sub = 0.6, adj = 0)
+#'  cex.sub = 0.6, adj = 0)
 #'
 #'
 
 knsmooth <- function(y, mu = 1, b = 0.15, bb = c(0, 1)) {
 
-  if (all(bb == c(0, 1))) bb = 0
+  if (length(y) <= 1 || !all(!is.na(y)) || !is.numeric(y)) {
+    stop("The argument 'y' must be a numeric vector with length > 1 and ",
+         "without NAs.")
+  }
+
+  if (length(mu) != 1 || is.na(mu) || !is.numeric(mu) || mu < 0) {
+    stop("The argument 'mu' must be a single non-zero and non-NA integer ",
+         "value.")
+  }
+  mu <- floor(mu)
+
+  if (length(b) != 1 || is.na(b) || !is.numeric(b) || (b <= 0 || b >= 0.5)) {
+    stop("The argument 'b' must be a single non-NA double value with ",
+         "0 < b < 0.5.")
+  }
+
+  if (!length(bb) %in% c(1, 2) || !all(!is.na(bb)) || !is.numeric(b)) {
+    stop("The argument 'bb' must be a single non-NA integer ",
+         "(either 0 or 1).")
+  }
+  bb <- floor(bb)
+
+  if (all(bb == c(0, 1))) bb <- 0
+  if (length(bb) != 1 || !(bb %in% c(0, 1))) {
+    stop("The argument 'bb' must be a single non-NA integer ",
+         "(either 0 or 1).")
+  }
+
   n <- length(y)           #number of observations
   hn <- trunc(b * n + 0.5)
   gr <- rep(0, n)         #vector of estimates

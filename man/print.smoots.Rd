@@ -7,19 +7,21 @@
 \method{print}{smoots}(x, ...)
 }
 \arguments{
-\item{x}{an input object of class \emph{smoots}.}
+\item{x}{an input object of class \code{smoots}.}
 
-\item{...}{additional arguments of the standard print method}
+\item{...}{included for compatibility; additional arguments will however
+not affect the output.}
 }
 \value{
 None
 }
 \description{
-This function regulates how objects created by the package smoots are printed.
+This function regulates how objects created by the package \code{smoots} are
+printed.
 }
 \author{
 \itemize{
-\item Dominik Schulz (Student Assistant) (Department of Economics, Paderborn
+\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
 University), \cr
 Package Creator and Maintainer
 }

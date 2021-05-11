@@ -1,9 +1,11 @@
 #' Print Method for the Package 'smoots'
 #'
-#'This function regulates how objects created by the package smoots are printed.
+#'This function regulates how objects created by the package \code{smoots} are
+#'printed.
 #'
-#'@param x an input object of class \emph{smoots}.
-#'@param ... additional arguments of the standard print method
+#'@param x an input object of class \code{smoots}.
+#'@param ... included for compatibility; additional arguments will however
+#'not affect the output.
 #'
 #'@export
 #'
@@ -12,7 +14,7 @@
 #'
 #'@author
 #'\itemize{
-#'\item Dominik Schulz (Student Assistant) (Department of Economics, Paderborn
+#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
 #'University), \cr
 #'Package Creator and Maintainer
 #'}
@@ -21,23 +23,42 @@
 # Print function for the R package 'smoots'-------------------------------
 print.smoots <- function(x, ...) {
 
-#  if(attr(x, "function") == "smooth.lpf") {
 
-#  print(round(x$ye, digits = 4))
-
-#  } else if(attr(x, "function") == "smooth.ddlp") {
-
-#    print(round(x$b0, digits = 4))
-#    print(round(head(x$ye, digits = 4)))
-
-#  }
+  if (attr(x, "function") == "rollCast") {
+    cat("---------------------------", fill = TRUE)
+    cat("| Results of the backtest |", fill = TRUE)
+    cat("---------------------------", fill = TRUE)
+    cat(" ", fill = TRUE)
+    cat("Model: Semi-ARMA(", x[["model.par"]][["arma"]][[1]], ",",
+      x[["model.par"]][["arma"]][[2]], "), bandwidth: ",
+      sprintf("%.4f", x[["model.nonpar"]][["b0"]]), fill = TRUE,
+      sep = "")
+    if (x[["method"]] == "norm") {
+      method <- "normal"
+    } else {
+      method <- "bootstrap"
+    }
+    if (x[["np.fcast"]] == "lin") {
+      np.fcast <- "linear"
+    } else {
+      np.fcast <- "constant"
+    }
+    df1 <- data.frame(c(paste0(x[["alpha"]] * 100, "%"), method, np.fcast,
+      sum(x[["breach"]]), sprintf("%.4f", x[["MASE"]]),
+      sprintf("%.4f", x[["RMSSE"]])))
+    colnames(df1) <- ""
+    rownames(df1) <- c("Forecasting intervals:", "Method:", "Extrapolation:",
+      "Breaches:", "MASE:", "RMSSE:")
+    print.data.frame(df1, right = TRUE)
+  }
   if (attr(x, "function") == "msmooth" | attr(x, "function") == "tsmooth") {
     if (attr(x, "method") == "lpr") {
       cat("-------------------------------------------------", fill = TRUE)
       cat("| Results of the nonparametric trend estimation |", fill = TRUE)
       cat("-------------------------------------------------", fill = TRUE)
       cat("Method: Local Polynomial Regression", fill = TRUE)
-      result_vector <- c(as.character(x$n), x$niterations, round(x$b0, 4))
+      result_vector <- c(as.character(x$n), x$niterations,
+        sprintf("%.4f", x$b0))
       result_dataframe <- data.frame(result_vector)
       rnames_dataframe <- c("Number of observations:",
         "Iterations until convergence:", "Optimal bandwidth by IPI:")
@@ -55,7 +76,8 @@ print.smoots <- function(x, ...) {
                       "Smoothness parameter:",
                       "Variance factor estimation:",
                       "Enlarged bandwidth (var. factor):",
-                      "Inflation rate:", "Boundary method:", "Boundary cut-off:")
+                      "Inflation rate:", "Boundary method:",
+                      "Boundary cut-off:")
       colnames(ipi_df) <- ""
       rownames(ipi_df) <- rnames_ipi
       print.data.frame(ipi_df)
@@ -72,15 +94,21 @@ print.smoots <- function(x, ...) {
       cat(" ", fill = TRUE)
       cat("Iterations:", fill = TRUE)
       cat("-----------", fill = TRUE)
-      print.data.frame(data.frame(bandwidth = round(x$iterations, digits = 4),
-        row.names = paste0("i = ", 1:x$niterations)))
+      if (x$niterations < 10) {
+        it.names <- paste0("i = ", 1:x$niterations)
+      } else {
+        it.names <- paste0("i = ", sprintf("%2.f", 1:x$niterations))
+      }
+      print.data.frame(data.frame(bandwidth = sprintf("%.4f", x$iterations),
+        row.names = it.names))
 
     } else if (attr(x, "method") == "kr") {
       cat("-------------------------------------------------", fill = TRUE)
       cat("| Results of the nonparametric trend estimation |", fill = TRUE)
       cat("-------------------------------------------------", fill = TRUE)
       cat("Method: Kernel Regression", fill = TRUE)
-      result_vector <- c(as.character(x$n), x$niterations, round(x$b0, 4))
+      result_vector <- c(as.character(x$n), x$niterations,
+        sprintf("%.4f", x$b0))
       result_dataframe <- data.frame(result_vector)
       rnames_dataframe <- c("Number of observations:",
         "Iterations until convergence:", "Optimal bandwidth by IPI:")
@@ -116,17 +144,25 @@ print.smoots <- function(x, ...) {
         cat(" ", fill = TRUE)
         cat("Iterations:", fill = TRUE)
         cat("-----------", fill = TRUE)
-        print.data.frame(data.frame(bandwidth = round(x$iterations, digits = 4),
-                                    row.names = paste0("i = ", 1:x$niterations)))
+        if (x$niterations < 10) {
+          it.names <- paste0("i = ", 1:x$niterations)
+        } else {
+          it.names <- paste0("i = ", sprintf("%2.f", 1:x$niterations))
+        }
+        print.data.frame(data.frame(bandwidth = sprintf("%.4f", x$iterations),
+          row.names = it.names))
 
     }
   } else if(attr(x, "function") == "dsmooth") {
-      cat("------------------------------------------------------", fill = TRUE)
-      cat("| Results of the nonparametric derivative estimation |", fill = TRUE)
-      cat("------------------------------------------------------", fill = TRUE)
+      cat("------------------------------------------------------",
+        fill = TRUE)
+      cat("| Results of the nonparametric derivative estimation |",
+        fill = TRUE)
+      cat("------------------------------------------------------",
+        fill = TRUE)
       cat("Method: Local Polynomial Regression", fill = TRUE)
-      result_vector <- c(as.character(x$deriv), x$n, x$niterations,
-                         round(x$b0, 4))
+      result_vector <- c(as.character(x[["v"]]), x$n, x$niterations,
+        sprintf("%.4f", x$b0))
       result_dataframe <- data.frame(result_vector)
       rnames_dataframe <- c("Order of derivative:", "Number of observations:",
         "Iterations until convergence:", "Optimal bandwidth by IPI:")
@@ -161,8 +197,13 @@ print.smoots <- function(x, ...) {
       cat(" ", fill = TRUE)
       cat("Iterations:", fill = TRUE)
       cat("-----------", fill = TRUE)
-      print.data.frame(data.frame(bandwidth = round(x$iterations, digits = 4),
-                                  row.names = paste0("i = ", 1:x$niterations)))
+      if (x$niterations < 10) {
+        it.names <- paste0("i = ", 1:x$niterations)
+      } else {
+        it.names <- paste0("i = ", sprintf("%2.f", 1:x$niterations))
+      }
+      print.data.frame(data.frame(bandwidth = sprintf("%.4f", x$iterations),
+        row.names = it.names))
 
   } else if (attr(x, "function") == "gsmooth" |
              attr(x, "function") == "knsmooth") {
@@ -215,6 +256,16 @@ print.smoots <- function(x, ...) {
                           "Bandwidth:")
       print.data.frame(abbr, right = FALSE)
     }
+  } else if (attr(x, "function") == "confBounds") {
+    cat("-----------------------------------------------", fill = TRUE)
+    cat("| Results of the confidence bounds estimation |", fill = TRUE)
+    cat("-----------------------------------------------", fill = TRUE)
+    result <- c(as.character(x$n), x$v, sprintf("%.4f", x$b.ub))
+    result_df <- data.frame(result)
+    colnames(result_df) <- ""
+    rownames(result_df) <- c("Number of observations:", "Order of derivative:",
+      "Adjusted bandwidth:")
+    print.data.frame(result_df)
   }
 
 

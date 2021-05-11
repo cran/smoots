@@ -4,37 +4,31 @@
 \alias{plot.smoots}
 \title{Plot Method for the Package 'smoots'}
 \usage{
-\method{plot}{smoots}(x, type = "l", main = NULL, xlab = NULL, ylab = NULL, ...)
+\method{plot}{smoots}(x, t = NULL, rescale = TRUE, ...)
 }
 \arguments{
-\item{x}{an input object of class \emph{smoots}.}
+\item{x}{an input object of class \code{smoots}.}
 
-\item{type}{the usual 'type' argument of the plot function; is set to "l" per
-default.}
+\item{t}{an optional vector with time points that will be considered for
+the x-axis within the plot; is set to NULL by default and uses a vector
+\code{1:length(x$ye)} for time points.}
 
-\item{main}{the usual 'main' argument of the plot function; is set to NULL per
-default and then uses a predefined title that depends on the chosen smoots
-plot.}
+\item{rescale}{a single logical value; is set to \code{TRUE} by default;
+if the output of a derivative estimation process is passed to \code{x} and if
+\code{rescale = TRUE}, the estimates will be rescaled according to \code{t}.}
 
-\item{xlab}{the usual 'xlab' argument of the plot function; is set to NULL
-per default and then uses a predefined label for the x-axis that depends on
-the chosen smoots plot.}
-
-\item{ylab}{the usual 'ylab' argument of the plot function; is set to NULL
-per default and then uses a predefined label for the y-axis that depends on
-the chosen smoots plot.}
-
-\item{...}{additional arguments of the standard plot method}
+\item{...}{additional arguments of the standard plot method.}
 }
 \value{
 None
 }
 \description{
-This function regulates how objects created by the package smoots are plotted.
+This function regulates how objects created by the package \code{smoots} are
+plotted.
 }
 \author{
 \itemize{
-\item Dominik Schulz (Student Assistant) (Department of Economics, Paderborn
+\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
 University), \cr
 Package Creator and Maintainer
 }
