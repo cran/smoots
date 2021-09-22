@@ -158,7 +158,8 @@ interior points and the remaining rows contain the weights for the right-hand
 boundary points; each row has exactly \eqn{2[nb + 0.5] + 1} elements,
 more specifically the weights for observations of the nearest
 \eqn{2[nb + 0.5] + 1} time points; moreover, the weights are normalized,
-i.e. the sum of the elements of any row is \eqn{1}.}
+i.e. the weights are obtained under consideration of the time points
+\eqn{x_t = t/n}, where \eqn{t = 1, 2, ..., n}.}
 \item{ye}{the nonparametric estimates of the trend.}
 }
 }
@@ -202,12 +203,12 @@ Furthermore, we define
 \deqn{C_{1} = \frac{I[m^{(k)}] \beta_{(\nu, k)}^2}{(k!)^2}}{C_1 =
 [I[m^(k)]\{\beta_(\nu, k)\}^2] / (k!)^2}
 and
-\deqn{C_{2} = \frac{2 \pi c_{f} (d_b - c_b) R(K).}{nh^{2 \nu + 1}}}{C_2 =
-2\pi(d_b - c_b)R(K)c_f.}
-The AMISE is then
-\deqn{AMISE(h) = h^{2(k-\nu)}C_{1} + C_{2}}{AMISE(h) = h^[2(k - \nu)] C_1 +
-C_2}
-with \eqn{h} being the bandwidth.
+\deqn{C_{2} = \frac{2 \pi c_{f} (d_b - c_b) R(K)}{nh^{2 \nu + 1}}}{C_2 =
+2\pi(d_b - c_b)R(K)c_f / (nh^[2\nu + 1])}
+with \eqn{h} being the bandwidth and \eqn{n} being the number of
+observations. The AMISE is then
+\deqn{AMISE(h) = h^{2(k-\nu)}C_{1} + C_{2}.}{AMISE(h) = h^[2(k - \nu)] C_1 +
+C_2.}
 
 The function calculates suitable estimates for \eqn{c_f}, the variance
 factor, and \eqn{I[m^{(k)}]}{I[m^(k)]} over different iterations. In each

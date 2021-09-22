@@ -77,7 +77,9 @@ However, the main difference is that this function should be applied, if the
 distribution of the innovations is unknown or explicitly non-Gaussian,
 because the underlying bootstrap process does not need a distribution
 assumption. In spite of this advantage, it also needs significantly more
-computation time (see also: \code{\link{bootCast}}).
+computation time. Therefore, with version 1.1.1, the bootstrap can now be
+conducted in parallel for an improved performance (see also:
+\code{\link{bootCast}}).
 
 \code{trendCast} uses a \code{smoots} object that is the output of a trend
 estimation and calculates point forecasts of the trend. Forecasting intervals

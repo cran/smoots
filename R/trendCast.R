@@ -75,6 +75,9 @@
 #'
 #'@export
 #'
+#'@importFrom graphics lines
+#'@importFrom utils tail
+#'
 #'@return
 #'A numeric vector is always returned with the forecasted values. Depending
 #'on the setting for the argument \emph{plot}, a generic plot might be created.

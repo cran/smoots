@@ -13,7 +13,9 @@ modelCast(
   alpha = 0.95,
   it = 10000,
   n.start = 1000,
-  msg = 1000,
+  msg,
+  pb = TRUE,
+  cores = future::availableCores(),
   np.fcast = c("lin", "const"),
   export.error = FALSE,
   plot = FALSE,
@@ -68,12 +70,18 @@ of observations for the simulated ARMA series via bootstrap; is set to
 \code{1000} by default; only necessary, if \code{method = "boot"};decimal
 numbers will be rounded off to integers.}
 
-\item{msg}{an integer \eqn{\geq 1}{\ge 1}; controls the iteration status
-report that is frequently printed to the R console if \code{method = "boot"};
-for \code{msg = NA}, nothing will be printed, for any positive integer any
-message Iteration: \eqn{i}' with \eqn{i} being divisible by \code{msg}
-without a rest will be shown in the console; is set to \code{msg = 1000} by
-default; decimal numbers will be rounded off to integers.}
+\item{msg}{this argument is deprecated; make use of the argument \code{pb}
+instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
+any one-element numeric vector will lead to \code{pb = TRUE}.}
+
+\item{pb}{a logical value; for \code{pb = TRUE}, a progress bar will be shown
+in the console, if \code{method = "boot"}.}
+
+\item{cores}{an integer value >0 that states the number of (logical) cores to
+use in the bootstrap (or \code{NULL}); the default is the maximum number of
+available cores
+(via \code{\link[future:availableCores]{future::availableCores}}); for
+\code{cores = NULL}, parallel computation is disabled.}
 
 \item{np.fcast}{a character object; defines the forecasting method used
 for the nonparametric trend; for \code{np.fcast = "lin"} the trend is
@@ -107,7 +115,7 @@ points will be calculated automatically.}
 \value{
 The function returns a \eqn{3} by \eqn{h} matrix with its columns
 representing the future time points and the point forecasts, the lower
-boundaries of the forecasting intervals and the upper boundaries of the
+bounds of the forecasting intervals and the upper bounds of the
 forecasting intervals as the rows. If the argument \code{plot} is set to
 \code{TRUE}, a plot of the forecasting results is created.
 
@@ -116,8 +124,8 @@ elements is returned instead.
 
 \describe{
 \item{fcast}{the \eqn{3} by \eqn{h} forecasting matrix with point forecasts
-and forecasting intervals.}
-\item{error}{an \code{it} by \eqn{h}(it X h)-matrix, where each column
+and bounds of the forecasting intervals.}
+\item{error}{an \code{it} by \eqn{h} matrix, where each column
 represents a future time point \eqn{n + 1, n + 2, ..., n + h}; in each column
 the respective \code{it} simulated forecasting errors are saved.}
 }
@@ -134,7 +142,8 @@ based on the additive nonparametric regression model
 where \eqn{y_t}{y_[t]} is the observed time series with equidistant design,
 \eqn{x_t}{x_[t]} is the rescaled time on the interval \eqn{[0, 1]},
 \eqn{m(x_t)}{m(x_[t])} is a smooth trend function and
-\eqn{\epsilon_t}{\epsilon_[t]} are stationary errors with E(eps_\link{t}) = 0 and
+\eqn{\epsilon_t}{\epsilon_[t]} are stationary errors with
+\eqn{E(\epsilon_t) = 0}{E(\epsilon_[t]) = 0} and
 short-range dependence (see also Beran and Feng, 2002). Thus, we assume
 \eqn{y_t}{y_[t]} to be a trend-stationary time series. Furthermore, we assume
 that the rest term \eqn{\epsilon_t}{\epsilon_[t]} follows an ARMA(\eqn{p,q})
@@ -226,11 +235,16 @@ the bootstrap, whereas \code{n.start} sets the number of 'burn-in'
 observations in the simulated ARMA processes within the bootstrap that are
 omitted.
 
-More control over messages to the R console is achieved with the argument
-\code{msg}. Usually, an iteration status report is printed to the console
-based on \code{msg} for \code{method = "boot"}. Every message
-'Iteration: \eqn{i}', where \eqn{i} is divisable by \code{msg} without rest,
-is printed. For \emph{msg = "NA"} no messages will be printed at all.
+Since this bootstrap approach for \code{method = "boot"} generally needs a
+lot of computation time, especially for
+series with high numbers of observations and when fitting models with many
+parameters, parallel computation of the bootstrap iterations is enabled.
+With \code{cores}, the number of cores can be defined with an integer.
+Nonetheless, for \code{cores = NULL}, no cluster is created and therefore
+the parallel computation is disabled. Note that the bootstrapped results are
+fully reproducible for all cluster sizes. The progress of the bootstrap can
+be observed in the R console, where a progress bar and the estimated
+remaining time are displayed for \code{pb = TRUE}.
 
 Moreover, the argument \code{np.fcast} allows to set the forecasting method
 for the nonparametric trend function. As previously discussed, the two
@@ -250,14 +264,18 @@ Within this function, the \code{\link[stats]{arima}} function of the
 for the estimation of ARMA models. Furthermore, to increase the performance,
 C++ code via the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
 \code{\link[RcppArmadillo:RcppArmadillo-package]{RcppArmadillo}} packages was
-implemented.
+implemented. Also, the \code{\link[future:multisession]{future}} and
+\code{\link[future.apply:future.apply-package]{future.apply}} packages are
+considered for parallel computation of bootstrap iterations. The progress
+of the bootstrap is shown via the
+\code{\link[progressr:progressr-package]{progressr}} package.
 }
 \examples{
 \donttest{
 X <- log(smoots::gdpUS$GDP)
 NPest <- smoots::msmooth(X)
 modelCast(NPest, h = 5, plot = TRUE, xlim = c(261, 295), type = "b",
- col = "deepskyblue4", lty = 3, pch = 20, main = "Examplary title")
+ col = "deepskyblue4", lty = 3, pch = 20, main = "Exemplary title")
 }
 
 }

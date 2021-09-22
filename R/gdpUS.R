@@ -11,7 +11,8 @@
 #'   \item{GDP}{the Gross Domestic Product of the US in billions of chained
 #'   2012 US Dollars (annual rate)}
 #' }
-#' @source The data was obtained from the Federal Reserve Bank of St. Louis.
+#' @source The data was obtained from the Federal Reserve Bank of St. Louis
+#'  (accessed: 2019-09-01).
 #'
 #' \url{https://fred.stlouisfed.org/series/GDPC1}
 "gdpUS"

@@ -14,6 +14,8 @@
 #'
 #'@export
 #'
+#'@importFrom graphics lines
+#'
 #'@return
 #'None
 #'
@@ -226,7 +228,7 @@ plot.smoots <- function(x, t = NULL, rescale = TRUE, ...) {
       if (is.null(dots[["main"]])) {
         if (attr(dots[["y"]], "function") == "dsmooth") {
           dots[["main"]] <- paste0("Estimated derivative series, d = ",
-            dots[["y"]]$d)
+            dots[["y"]]$v)
         } else if (attr(dots[["y"]], "function") == "gsmooth") {
           dots[["main"]] <- paste0("Estimated derivative series, d = ",
             dots[["y"]]$v)

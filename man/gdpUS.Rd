@@ -14,7 +14,8 @@ A data frame with 290 rows and 3 variables:
 }
 }
 \source{
-The data was obtained from the Federal Reserve Bank of St. Louis.
+The data was obtained from the Federal Reserve Bank of St. Louis
+ (accessed: 2019-09-01).
 
 \url{https://fred.stlouisfed.org/series/GDPC1}
 }

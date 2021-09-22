@@ -96,7 +96,8 @@ interior points and the remaining rows contain the weights for the right-hand
 boundary points; each row has exactly \eqn{2[nb + 0.5] + 1} elements,
 more specifically the weights for observations of the nearest
 \eqn{2[nb + 0.5] + 1} time points; moreover, the weights are normalized,
-i.e. the sum of the elements of any row is \eqn{1}.}
+i.e. the weights are obtained under consideration of the time points
+\eqn{x_t = t/n}, where \eqn{t = 1, 2, ..., n}.}
 \item{ye}{a vector with the estimates of the selected nonparametric order of
 derivative on the rescaled time interval \eqn{[0, 1]}.}
 }

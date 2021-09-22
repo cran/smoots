@@ -125,11 +125,15 @@
 #'
 #'@return The function returns a \eqn{3} by \eqn{h} matrix with its columns
 #'representing the future time points and the point forecasts, the lower
-#'boundaries of the forecasting intervals and the upper boundaries of the
+#'bounds of the forecasting intervals and the upper bounds of the
 #'forecasting intervals as the rows. If the argument \code{plot} is set to
 #'\code{TRUE}, a plot of the forecasting results is created.
 #'
 #'@export
+#'
+#'@importFrom stats arima qnorm
+#'@importFrom utils tail
+#'@importFrom graphics polygon lines points
 #'
 #'@references
 #' Feng, Y., Gries, T. and Fritz, M. (2020). Data-driven
@@ -167,7 +171,7 @@
 #'# Application of normCast()
 #'result <- normCast(X = X, p = 2, q = 1, include.mean = TRUE, h = 5,
 #'  plot = TRUE, xlim = c(1971, 2005), col = "deepskyblue4",
-#'  type = "b", lty = 3, pch = 16, main = "Examplary title")
+#'  type = "b", lty = 3, pch = 16, main = "Exemplary title")
 #'result
 
 
@@ -203,7 +207,6 @@ normCast <- function(X, p = NULL, q = NULL, include.mean = FALSE, h = 1,
     stop("The argument 'plot' must be a single logical value (TRUE or FALSE).")
   }
 
-
   if (is.null(p) && is.null(q)) {
     message("Model selection in progress.")
     p.max <- 5
@@ -227,25 +230,25 @@ normCast <- function(X, p = NULL, q = NULL, include.mean = FALSE, h = 1,
   if (include.mean == TRUE) {
     mu <- coefs[["intercept"]]
   } else {
-    mu = 0
+    mu <- 0
   }
   if (p > 0) {
-    beta <- head(coefs, p)
+    ar <- head(coefs, p)
   } else {
-    beta <- 0
+    ar <- 0
   }
   if (q > 0) {
-    alph <- head(coefs[(p + 1):lc], q)
+    ma <- head(coefs[(p + 1):lc], q)
   } else {
-    alph <- 0
+    ma <- 0
   }
 
   innov <- pilot.est$residuals
   sig2 <- pilot.est$sigma2
 
-  X.fcst <- fcastCpp(X = X, innov = innov, beta = beta, alpha = alph, mu = mu,
-    h = h)
-  c.coef <- maInfty(beta = beta, alpha = alph, m = h - 1)
+  X.fcst <- c(fcastCpp(X = X, innov = innov, ar = ar, ma = ma, mu = mu,
+    h = h))
+  c.coef <- maInfty(ar = ar, ma = ma, m = h - 1)
   sd.fcast <- sqrt(sig2 * cumsum(c.coef^2))
   alpha.s <- 1 - alpha
   q_norm <- qnorm(1 - alpha.s/2)

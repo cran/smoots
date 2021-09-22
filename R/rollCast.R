@@ -45,12 +45,16 @@
 #'of observations for the simulated ARMA series via bootstrap; is set to
 #'\code{1000} by default; only necessary, if \code{method = "boot"};decimal
 #'numbers will be rounded off to integers.
-#'@param msg an integer \eqn{\geq 1}{\ge 1}; controls the iteration status
-#'report that is frequently printed to the R console if \code{method = "boot"};
-#'for \code{msg = NA}, nothing will be printed, for any positive integer any
-#'message Iteration: \eqn{i}' with \eqn{i} being divisible by \code{msg}
-#'without a rest will be shown in the console; is set to \code{msg = 1000} by
-#'default; decimal numbers will be rounded off to integers.
+#'@param msg this argument is deprecated; make use of the argument \code{pb}
+#'instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
+#'any one-element numeric vector will lead to \code{pb = TRUE}.
+#'@param pb a logical value; for \code{pb = TRUE}, a progress bar will be shown
+#'in the console, if \code{method = "boot"}.
+#'@param cores an integer value >0 that states the number of (logical) cores to
+#'use in the bootstrap (or \code{NULL}); the default is the maximum number of
+#'available cores
+#'(via \code{\link[future:availableCores]{future::availableCores}}); for
+#'\code{cores = NULL}, parallel computation is disabled.
 #'@param argsSmoots a list that contains arguments that will be passed to
 #'\code{\link{msmooth}} for the estimation of the nonparametric trend
 #'function; by default, the default values of \code{msmooth} are used.
@@ -67,6 +71,10 @@
 #'case).
 #'
 #'@export
+#'
+#'@importFrom stats arima qnorm quantile
+#'@importFrom utils head tail
+#'@importFrom graphics lines points polygon
 #'
 #'@details
 #'Define that an observed, equidistant time series \eqn{y_t}{y_[t]}, with
@@ -151,15 +159,19 @@
 #'extrapolation. For more information on these methods, we refer the reader to
 #'\code{\link{trendCast}}.
 #'
-#'\code{it}, \code{n.start} and \code{msg} are only
+#'\code{it}, \code{n.start}, \code{pb} and \code{cores} are only
 #'relevant for \code{method = "boot"}. With \code{it} the total number of
 #'bootstrap iterations is defined, whereas \code{n.start} regulates, how
 #'many 'burn-in' observations are generated for each simulated ARMA process
 #'in the bootstrap. Since a bootstrap may take a longer computation time,
-#'the argument \code{msg} helps adjusting the frequency of messages printed
-#'to the R console that inform about the iteration status. Additional
-#'information on these three function arguments can be found in
-#'\code{\link{bootCast}}.
+#'with the argument \code{cores} the number of cores for parallel computation
+#'of the bootstrap iterations can be defined. Nonetheless, for
+#'\code{cores = NULL}, no cluster is created and therefore
+#'the parallel computation is disabled. Note that the bootstrapped results are
+#'fully reproducible for all cluster sizes. Moreover, for \code{pb = TRUE},
+#'the progress of the bootstrap approach can be observed in the R console via
+#'a progress bar. Additional information on these four function arguments can
+#'be found in \code{\link{bootCast}}.
 #'
 #'The argument \code{argsSmoots} is a list. In this list, different arguments
 #'of the function \code{\link{msmooth}} can be implemented to adjust the
@@ -183,7 +195,11 @@
 #'the estimation of ARMA models. Furthermore, to increase the performance,
 #'C++ code via the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
 #'\code{\link[RcppArmadillo:RcppArmadillo-package]{RcppArmadillo}} packages
-#'was implemented.
+#'was implemented. Also, the \code{\link[future:multisession]{future}} and
+#'\code{\link[future.apply:future.apply-package]{future.apply}} packages are
+#'considered for parallel computation of bootstrap iterations. The progress
+#'of the bootstrap is shown via the
+#'\code{\link[progressr:progressr-package]{progressr}} package.
 #'
 #'@md
 #'
@@ -215,10 +231,10 @@
 #'\item{fcast.rest}{a numeric vector that contains the \eqn{K} point forecasts
 #'of the parametric part of the model.}
 #'\item{fcast.roll}{a numeric matrix that contains the \eqn{K} rolling point
-#'forecasts as well as the values of the respective forecasting intervals
-#'for the complete model;
-#'the first row contains the point forecasts, the lower boundary values
-#'are in the second row and the upper values of the forecasting intervals
+#'forecasts as well as the values of the bounds of the respective forecasting
+#'intervals for the complete model;
+#'the first row contains the point forecasts, the lower bounds of the
+#'forecasting intervals are in the second row and the upper bounds
 #'can be found in the third row.}
 #'\item{fcast.trend}{a numeric vector that contains the \eqn{K} obtained trend
 #'forecasts.}
@@ -286,7 +302,8 @@
 
 rollCast <- function(y, p = NULL, q = NULL, K = 5, method = c("norm", "boot"),
   alpha = 0.95, np.fcast = c("lin", "const"), it = 10000, n.start = 1000,
-  msg = 1000, argsSmoots = list(), plot = TRUE, argsPlot = list()) {
+  msg, pb = TRUE, cores = future::availableCores(),
+  argsSmoots = list(), plot = TRUE, argsPlot = list()) {
 
   if (length(y) <= 1 || !all(!is.na(y)) || !is.numeric(y)) {
     stop("A numeric vector without NAs must be passed to the argument 'y'.")
@@ -326,7 +343,7 @@ rollCast <- function(y, p = NULL, q = NULL, K = 5, method = c("norm", "boot"),
   y.out <- y[(n.in + 1):(n)]
 
   argsSmoots[["y"]] <- y.in
-  np.est <- suppressMessages(do.call(what = smoots::msmooth,
+  np.est <- suppressMessages(do.call(what = msmooth,
     args = argsSmoots))
 
   if (is.null(p) && is.null(q)) {
@@ -350,13 +367,13 @@ rollCast <- function(y, p = NULL, q = NULL, K = 5, method = c("norm", "boot"),
     trendf <- 0
   }
   fcast.trend <- np.est[["ye"]][[n.in]] + (1:K) * trendf
-  arma.est <- suppressWarnings(stats::arima(np.est[["res"]],
+  arma.est <- suppressWarnings(arima(np.est[["res"]],
     order = c(p, 0, q), include.mean = FALSE))
-  alph <- beta <- 0
-  if (p > 0) beta <- unname(arma.est[["coef"]][1:p])
-  if (q > 0) alph <- unname(arma.est[["coef"]][(p + 1):(p + q)])
-  p.star <- length(beta)
-  q.star <- length(alph)
+  ma <- ar <- 0
+  if (p > 0) ar <- unname(arma.est[["coef"]][1:p])
+  if (q > 0) ma <- unname(arma.est[["coef"]][(p + 1):(p + q)])
+  p.star <- length(ar)
+  q.star <- length(ma)
 
   l <- max(p.star, q.star)
   y.out.arma <- y.out - fcast.trend
@@ -365,8 +382,8 @@ rollCast <- function(y, p = NULL, q = NULL, K = 5, method = c("norm", "boot"),
   arma.fcast <- rep(NA, times = K)
 
   for (i in seq_along(arma.fcast)) {
-    arma.fcast[i] <- beta %*% x[(i + l - 1):(i + l - p.star)] +
-      alph %*% u[(i + l - 1):(i + l - q.star)]
+    arma.fcast[i] <- ar %*% x[(i + l - 1):(i + l - p.star)] +
+      ma %*% u[(i + l - 1):(i + l - q.star)]
     u[i + l] <- y.out.arma[i] - arma.fcast[i]
   }
   alpha.s <- 1 - alpha
@@ -376,9 +393,9 @@ rollCast <- function(y, p = NULL, q = NULL, K = 5, method = c("norm", "boot"),
     names(quants) <- paste0(c(100 * alpha.s / 2, 100 * (1 - alpha.s / 2)), "%")
     fcastErr <- NULL
   } else {
-    fcastModel <- modelCast(obj = np.est, p = p, q = q, h = 1, method = method,
-      alpha = alpha, it = it, n.start = n.start, msg = msg,
-      np.fcast = np.fcast, export.error = TRUE, plot = FALSE)
+    fcastModel <- bootCast(X = np.est[["res"]], p = p, q = q, h = 1,
+      alpha = alpha, it = it, n.start = n.start, msg, pb = pb,
+      cores = cores, export.error = TRUE, plot = FALSE)
     fcastErr <- c(fcastModel[["error"]])
     quants <- quantile(fcastErr, probs = c(alpha.s / 2, 1 - alpha.s / 2))
   }
@@ -443,20 +460,20 @@ rollCast <- function(y, p = NULL, q = NULL, K = 5, method = c("norm", "boot"),
         col = col.alpha("gray", 0.8))
       argsPlot[["x"]] <- x.out
       argsPlot[["y"]] <- y.out
-      do.call(what = graphics::lines, args = argsPlot)
-      graphics::lines(x.out, fcast.compl, col = "red")
+      do.call(what = lines, args = argsPlot)
+      lines(x.out, fcast.compl, col = "red")
     } else {
-      graphics::points(c(x.out, x.out), c(fc.up, fc.low), type = "l",
+      points(c(x.out, x.out), c(fc.up, fc.low), type = "l",
         col = col.alpha("gray", 0.8))
       argsPlot[["type"]] <- "p"
       if (is.null(argsPlot[["pch"]])) argsPlot[["pch"]] <- 20
       argsPlot[["x"]] <- x.out
       argsPlot[["y"]] <- y.out
-      do.call(what = graphics::points, args = argsPlot)
-      graphics::points(x.out, fcast.compl, col = "red", pch = 20)
+      do.call(what = points, args = argsPlot)
+      points(x.out, fcast.compl, col = "red", pch = 20)
     }
     if (sum(breach >= 1)) {
-      graphics::points(x.out[breach == TRUE], y.out[breach == TRUE],
+      points(x.out[breach == TRUE], y.out[breach == TRUE],
         col = "orange")
     }
   }

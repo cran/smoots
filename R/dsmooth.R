@@ -66,12 +66,12 @@
 #'\deqn{C_{1} = \frac{I[m^{(k)}] \beta_{(\nu, k)}^2}{(k!)^2}}{C_1 =
 #'[I[m^(k)]\{\beta_(\nu, k)\}^2] / (k!)^2}
 #'and
-#'\deqn{C_{2} = \frac{2 \pi c_{f} (d_b - c_b) R(K).}{nh^{2 \nu + 1}}}{C_2 =
-#'2\pi(d_b - c_b)R(K)c_f.}
-#'The AMISE is then
-#'\deqn{AMISE(h) = h^{2(k-\nu)}C_{1} + C_{2}}{AMISE(h) = h^[2(k - \nu)] C_1 +
-#'C_2}
-#'with \eqn{h} being the bandwidth.
+#'\deqn{C_{2} = \frac{2 \pi c_{f} (d_b - c_b) R(K)}{nh^{2 \nu + 1}}}{C_2 =
+#'2\pi(d_b - c_b)R(K)c_f / (nh^[2\nu + 1])}
+#'with \eqn{h} being the bandwidth and \eqn{n} being the number of
+#'observations. The AMISE is then
+#'\deqn{AMISE(h) = h^{2(k-\nu)}C_{1} + C_{2}.}{AMISE(h) = h^[2(k - \nu)] C_1 +
+#'C_2.}
 #'
 #'The variance factor \eqn{c_f} is first obtained from a pilot-estimation of
 #'the time series' nonparametric trend (\eqn{\nu = 0}) with polynomial order
@@ -174,7 +174,8 @@
 #'boundary points; each row has exactly \eqn{2[nb + 0.5] + 1} elements,
 #'more specifically the weights for observations of the nearest
 #'\eqn{2[nb + 0.5] + 1} time points; moreover, the weights are normalized,
-#'i.e. the sum of the elements of any row is \eqn{1}.}
+#'i.e. the weights are obtained under consideration of the time points
+#'\eqn{x_t = t/n}, where \eqn{t = 1, 2, ..., n}.}
 #'\item{ye}{the nonparametric estimates of the derivative for the rescaled
 #'time points on the interval \eqn{[0, 1]}.}
 #'}
@@ -323,7 +324,7 @@ dsmooth <- function(y, d = c(1, 2), mu = c(0, 1, 2, 3), pp = c(1, 3),
       bd <- bd2_func(bold)
 
       if (bd >= 0.49) {bd <- 0.49}
-      yed <- gsmoothCalcCpp(y, k, pd, mu, bd, bb)
+      yed <- c(gsmoothCalcCpp(y, k, pd, mu, bd, bb))
       I2 <- sum(yed[(n1 + 1):(n - n1)] ** 2) / (n - 2 * n1)
 	    c3 <- cf0 / I2
 
@@ -346,7 +347,7 @@ dsmooth <- function(y, d = c(1, 2), mu = c(0, 1, 2, 3), pp = c(1, 3),
   if (bopt < n^expoDer2) bopt <- n^expoDer2
   if (bopt > 0.49) {bopt <- 0.49}
   est.opt <- gsmoothCalc2Cpp(y, d, p, mu, bopt, bb)
-  ye <- est.opt$ye
+  ye <- c(est.opt$ye)
   ws <- est.opt$ws
   # Final results
   results <- list(ye = ye, orig = y, b0 = bopt, ws = ws,

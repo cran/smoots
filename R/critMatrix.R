@@ -21,6 +21,8 @@
 #'
 #'@export
 #'
+#'@importFrom stats arima
+#'
 #'@details
 #'This function is part of the \code{smoots} package and was implemented under
 #'version 1.1.0. The series passed to \code{X} is assumed to follow an
@@ -127,7 +129,7 @@ critMatrix <- function(X, p.max = 5, q.max = 5, criterion = c("bic", "aic"),
   for (i in 0:p.max) {
     for (j in 0:q.max) {
       suppressWarnings(
-        est <- stats::arima(X, order = c(i, 0, j), include.mean = include.mean)
+        est <- arima(X, order = c(i, 0, j), include.mean = include.mean)
       )
       if (criterion == "bic") {
         matOut[(i + 1), (j + 1)] <- -2 * est$loglik + log(n) * (i + j)

@@ -120,7 +120,8 @@
 #'boundary points; each row has exactly \eqn{2[nb + 0.5] + 1} elements,
 #'more specifically the weights for observations of the nearest
 #'\eqn{2[nb + 0.5] + 1} time points; moreover, the weights are normalized,
-#'i.e. the sum of the elements of any row is \eqn{1}.}
+#'i.e. the weights are obtained under consideration of the time points
+#'\eqn{x_t = t/n}, where \eqn{t = 1, 2, ..., n}.}
 #'\item{ye}{a vector with the estimates of the selected nonparametric order of
 #'derivative on the rescaled time interval \eqn{[0, 1]}.}
 #'}
@@ -221,7 +222,7 @@ gsmooth <- function(y, v = 0, p = v + 1, mu = 1, b = 0.15, bb = c(0, 1)) {
     }
 
     estim <- gsmoothCalc2Cpp(y, v, p, mu, b, bb)
-    gr <- estim$ye
+    gr <- c(estim$ye)
     ws <- estim$ws
     result <- list(ye = gr, orig = y, ws = ws, v = v, p = p, mu = mu, b = b,
       bb = bb, n = length(y))
@@ -231,8 +232,8 @@ gsmooth <- function(y, v = 0, p = v + 1, mu = 1, b = 0.15, bb = c(0, 1)) {
       result[["res"]] <- NULL
     }
 
-    class(result) = "smoots"  # set package attribute
-        attr(result, "function") = "gsmooth"  # set function attribute for
+    class(result) <- "smoots"  # set package attribute
+    attr(result, "function") <- "gsmooth"  # set function attribute for
                                                  # own print function
 
     result

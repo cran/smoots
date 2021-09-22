@@ -1,3 +1,7 @@
+#'
+#'@importFrom grDevices col2rgb colors
+#'
+
 color.name <- function(col) {
   col.rgb <- c(col2rgb(col))
   colors.all.rgb <- col2rgb(colors())

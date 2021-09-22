@@ -4,17 +4,19 @@
 # smoots
 
 The goal of `smoots` is to provide an easy way to estimate the
-nonparametric trend and its derivatives in equidistant time series with
-short-memory stationary errors. The main functions allow for data-driven
-estimates via local polynomial regression with an automatically selected
-optimal bandwidth.
+nonparametric trend and its derivatives in trend-stationary, equidistant
+time series with short-memory stationary errors. The main functions
+allow for data-driven estimates via local polynomial regression with an
+automatically selected optimal bandwidth.
 
 ## Installation
 
 You can install the released version of `smoots` from
 [CRAN](https://CRAN.R-project.org) with:
 
-    install.packages("smoots")
+``` r
+install.packages("smoots")
+```
 
 ## Example 1: Estimation of the nonparametric trend function
 
@@ -30,20 +32,24 @@ function and a zero-mean stationary rest with short-range dependence.
 The user-friendly and simply applicable function `msmooth()` for the
 estimation of trend function in the additive model will be used.
 
-    library(smoots)          # Call the package
+``` r
+library(smoots)          # Call the package
+```
 
-    data <- tempNH           # Call the 'tempNH' data frame
-    Yt <- data$Change        # Store the actual values as a vector 
+``` r
+data <- tempNH           # Call the 'tempNH' data frame
+Yt <- data$Change        # Store the actual values as a vector 
 
-    # Estimate the trend function via the 'smoots' package
-    results <- msmooth(Yt, p = 1, mu = 1, bStart = 0.15, alg = "A")
+# Estimate the trend function via the 'smoots' package
+results <- msmooth(Yt, p = 1, mu = 1, bStart = 0.15, alg = "A")
 
-    # Easily access the main estimation results
-    b.opt <- results$b0             # The optimal bandwidth
-    trend <- results$ye             # The trend estimates  
-    resid <- results$res            # The residuals
-    b.opt
-    #> [1] 0.101089
+# Easily access the main estimation results
+b.opt <- results$b0             # The optimal bandwidth
+trend <- results$ye             # The trend estimates  
+resid <- results$res            # The residuals
+b.opt
+#> [1] 0.101089
+```
 
 <img src="man/figures/README-plot1-1.png" width="100%" /><img src="man/figures/README-plot1-2.png" width="100%" />
 
@@ -70,24 +76,28 @@ order selection for the ARMA model is also built-in that is triggered,
 if no values are passed to the respective arguments that define the
 orders.
 
-    n <- length(Yt)
-    # Create a vector with exact time points (optional for the plot)
-    time <- seq(from = 1880 + 1 / 12, to = 2019, by = 1 / 12)
+``` r
+n <- length(Yt)
+# Create a vector with exact time points (optional for the plot)
+time <- seq(from = 1880 + 1 / 12, to = 2019, by = 1 / 12)
 
-    # Application of the forecasting function with automatic creation of a graphic
-    forecast <- modelCast(results, p = 1, q = 1, h = 5, alpha = 0.95, 
-      method = "norm", plot = TRUE, x = time, type = "b", 
-      col = "deepskyblue4", pch = 20, lty = 2, 
-      main = "Title (series is cut-off)", 
-      xlab = "Exemplary x-axis label", ylab = "Exemplary y-axis label")
+# Application of the forecasting function with automatic creation of a graphic
+forecast <- modelCast(results, p = 1, q = 1, h = 5, alpha = 0.95, 
+  method = "norm", plot = TRUE, x = time, type = "b", 
+  col = "deepskyblue4", pch = 20, lty = 2, 
+  main = "Title (series is cut-off)", 
+  xlab = "Exemplary x-axis label", ylab = "Exemplary y-axis label")
+```
 
 <img src="man/figures/README-fcast-1.png" width="100%" />
 
-    forecast
-    #>             k=1       k=2       k=3       k=4       k=5
-    #> fcast 1.1041137 1.1151230 1.1240264 1.1313490 1.1374849
-    #> 2.5%  0.7468131 0.7281308 0.7212654 0.7199682 0.7213253
-    #> 97.5% 1.4614144 1.5021152 1.5267873 1.5427297 1.5536445
+``` r
+forecast
+#>             k=1       k=2       k=3       k=4       k=5
+#> fcast 1.1041137 1.1151230 1.1240264 1.1313490 1.1374849
+#> 2.5%  0.7468131 0.7281308 0.7212654 0.7199682 0.7213253
+#> 97.5% 1.4614144 1.5021152 1.5267873 1.5427297 1.5536445
+```
 
 ## Example 3: Testing the trend graphically for linearity
 
@@ -95,33 +105,36 @@ Another contribution that was made to package version 1.1.0 is a
 function for testing the trend graphically for linearity. Based on a
 previously obtained nonparametric estimate of the trend or its
 derivatives, an asymptotically unbiased series of estimates with its
-asymptotically normally distributed confidence bounds is obtained and
-plotted. By choice, different polynomial regression lines can be
-displayed alongside the nonparametric trend estimates and its confidence
-bounds. The estimated slope of a simple linear regression model of the
-trend and the constant with value zero are displayed against the
-estimates of the first and second derivatives, respectively. If, for a
-selected confidence level 100s%, clearly more than (1 - s)100% of the
-estimated parametric line lies outside of the confidence bounds, the
-null hypothesis can be rejected. The following example is based yet
-again on the mean monthly temperature changes data and illustrates the
-linearity test with respect to the nonparametric trend. The derivatives
-are skipped at this point for simplicity. Moreover, a confidence level
-of 95% was chosen.
+confidence bounds is obtained and plotted. By choice, different
+polynomial regression lines can be displayed alongside the nonparametric
+trend estimates and its confidence bounds. The estimated slope of a
+simple linear regression model of the trend and the constant with value
+zero are displayed against the estimates of the first and second
+derivatives, respectively. If, for a selected confidence level 100s%,
+clearly more than (1 - s)100% of the estimated parametric line lies
+outside of the confidence bounds, the null hypothesis can be rejected.
+The following example is based yet again on the mean monthly temperature
+changes data and illustrates the linearity test with respect to the
+nonparametric trend. The derivatives are skipped at this point for
+simplicity. Moreover, a confidence level of 95% was chosen.
 
-    # Calculation of confidence bounds with creation of a graphic
-    bounds <- confBounds(results, alpha = 0.95, p = 1, x = time)
+``` r
+# Calculation of confidence bounds with creation of a graphic
+bounds <- confBounds(results, alpha = 0.95, p = 1, x = time)
+```
 
 <img src="man/figures/README-confbounds-1.png" width="100%" />
 
-    bounds
-    #> -----------------------------------------------
-    #> | Results of the confidence bounds estimation |
-    #> -----------------------------------------------
-    #>                               
-    #> Number of observations:   1668
-    #> Order of derivative:         0
-    #> Adjusted bandwidth:     0.0570
+``` r
+bounds
+#> -----------------------------------------------
+#> | Results of the confidence bounds estimation |
+#> -----------------------------------------------
+#>                               
+#> Number of observations:   1668
+#> Order of derivative:         0
+#> Adjusted bandwidth:     0.0570
+```
 
 For the (asymptotically) unbiased estimation of the trend function an
 adjusted bandwidth of 0.057 was used. Since more than 5% of the linear

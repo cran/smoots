@@ -55,7 +55,7 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
       bd <- bd_func(bold)
 
       if (bd >= 0.49) {bd <- 0.49}
-      yed <- gsmoothCalcCpp(y, k, pd, mu, bd, bb)
+      yed <- c(gsmoothCalcCpp(y, k, pd, mu, bd, bb))
       I2 <- sum(yed[(n1 + 1):(n - n1)]^2) / (n - 2 * n1)
 
       # Use an enlarged bandwidth for estimating cf or not (Feng/Heiler, 2009)
@@ -68,7 +68,7 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
 
       if (bv >= 0.49) {bv <- 0.49}
 
-      ye <- gsmoothCalcCpp(y, 0, p, mu, bv, bb)
+      ye <- c(gsmoothCalcCpp(y, 0, p, mu, bv, bb))
 
       # The optimal bandwidth-----------------------------------------------
 
@@ -135,7 +135,7 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
       bopt <- (c1 * c2 * c3)^expo1 * n^(-expo1)
       if (bopt < n^expo2) bopt <- n^expo2
       if (bopt > 0.49) {bopt = 0.49}
-      steps[i] = bopt
+      steps[i] <- bopt
       if (i > 2 && abs(bold - bopt) / bopt < 1 / n) {runc <- 0}
       if (i > 3 && abs(bold1 - bopt) / bopt < 1 / n) {
         bopt <- (bold + bopt) / 2
@@ -160,13 +160,13 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
                   bvc = bvc, bb = bb, cb = cb, v = 0)
   if (method == "lpr") {
     est.opt <- gsmoothCalc2Cpp(y, 0, p, mu, bopt, bb)
-    ye <- est.opt$ye
+    ye <- c(est.opt$ye)
     results[["ws"]] <- est.opt$ws
     res <- y - ye
     attr(results, "method") = "lpr"
   } else if (method == "kr") {
     est.opt <- knsmooth(y, mu, bopt, bb)
-    ye <- est.opt$ye
+    ye <- c(est.opt$ye)
     res <- est.opt$res
     attr(results, "method") = "kr"
   }

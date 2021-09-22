@@ -163,8 +163,8 @@ knsmooth <- function(y, mu = 1, b = 0.15, bb = c(0, 1)) {
   result <- list(ye = gr, orig = y, res = y - gr, mu = mu, b = b, bb = bb,
                  n = n)
 
-  class(result) = "smoots"  # set package attribute
-  attr(result, "function") = "knsmooth"  # set function attribute for
+  class(result) <- "smoots"  # set package attribute
+  attr(result, "function") <- "knsmooth"  # set function attribute for
   # own print function
 
   return(result)  ####The results are given in gr

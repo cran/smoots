@@ -19,7 +19,7 @@ A data frame with 7475 rows and 9 variables:
 }
 }
 \source{
-The data was obtained from Yahoo Finance.
+The data was obtained from Yahoo Finance (accessed: 2019-08-22).
 
 \url{https://query1.finance.yahoo.com/v7/finance/download/^GDAXI?period1=631148400&period2=1564524000&interval=1d&events=history&crumb=Iaq1EPZAQRb}
 }

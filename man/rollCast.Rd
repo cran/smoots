@@ -14,7 +14,9 @@ rollCast(
   np.fcast = c("lin", "const"),
   it = 10000,
   n.start = 1000,
-  msg = 1000,
+  msg,
+  pb = TRUE,
+  cores = future::availableCores(),
   argsSmoots = list(),
   plot = TRUE,
   argsPlot = list()
@@ -72,12 +74,18 @@ of observations for the simulated ARMA series via bootstrap; is set to
 \code{1000} by default; only necessary, if \code{method = "boot"};decimal
 numbers will be rounded off to integers.}
 
-\item{msg}{an integer \eqn{\geq 1}{\ge 1}; controls the iteration status
-report that is frequently printed to the R console if \code{method = "boot"};
-for \code{msg = NA}, nothing will be printed, for any positive integer any
-message Iteration: \eqn{i}' with \eqn{i} being divisible by \code{msg}
-without a rest will be shown in the console; is set to \code{msg = 1000} by
-default; decimal numbers will be rounded off to integers.}
+\item{msg}{this argument is deprecated; make use of the argument \code{pb}
+instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
+any one-element numeric vector will lead to \code{pb = TRUE}.}
+
+\item{pb}{a logical value; for \code{pb = TRUE}, a progress bar will be shown
+in the console, if \code{method = "boot"}.}
+
+\item{cores}{an integer value >0 that states the number of (logical) cores to
+use in the bootstrap (or \code{NULL}); the default is the maximum number of
+available cores
+(via \code{\link[future:availableCores]{future::availableCores}}); for
+\code{cores = NULL}, parallel computation is disabled.}
 
 \item{argsSmoots}{a list that contains arguments that will be passed to
 \code{\link{msmooth}} for the estimation of the nonparametric trend
@@ -114,10 +122,10 @@ it is set to \code{NULL}.}
 \item{fcast.rest}{a numeric vector that contains the \eqn{K} point forecasts
 of the parametric part of the model.}
 \item{fcast.roll}{a numeric matrix that contains the \eqn{K} rolling point
-forecasts as well as the values of the respective forecasting intervals
-for the complete model;
-the first row contains the point forecasts, the lower boundary values
-are in the second row and the upper values of the forecasting intervals
+forecasts as well as the values of the bounds of the respective forecasting
+intervals for the complete model;
+the first row contains the point forecasts, the lower bounds of the
+forecasting intervals are in the second row and the upper bounds
 can be found in the third row.}
 \item{fcast.trend}{a numeric vector that contains the \eqn{K} obtained trend
 forecasts.}
@@ -240,15 +248,19 @@ nonparametric trend function can be defined. Selectable are a linear
 extrapolation. For more information on these methods, we refer the reader to
 \code{\link{trendCast}}.
 
-\code{it}, \code{n.start} and \code{msg} are only
+\code{it}, \code{n.start}, \code{pb} and \code{cores} are only
 relevant for \code{method = "boot"}. With \code{it} the total number of
 bootstrap iterations is defined, whereas \code{n.start} regulates, how
 many 'burn-in' observations are generated for each simulated ARMA process
 in the bootstrap. Since a bootstrap may take a longer computation time,
-the argument \code{msg} helps adjusting the frequency of messages printed
-to the R console that inform about the iteration status. Additional
-information on these three function arguments can be found in
-\code{\link{bootCast}}.
+with the argument \code{cores} the number of cores for parallel computation
+of the bootstrap iterations can be defined. Nonetheless, for
+\code{cores = NULL}, no cluster is created and therefore
+the parallel computation is disabled. Note that the bootstrapped results are
+fully reproducible for all cluster sizes. Moreover, for \code{pb = TRUE},
+the progress of the bootstrap approach can be observed in the R console via
+a progress bar. Additional information on these four function arguments can
+be found in \code{\link{bootCast}}.
 
 The argument \code{argsSmoots} is a list. In this list, different arguments
 of the function \code{\link{msmooth}} can be implemented to adjust the
@@ -272,7 +284,11 @@ Within this function, the \code{\link[stats]{arima}} function of the
 the estimation of ARMA models. Furthermore, to increase the performance,
 C++ code via the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
 \code{\link[RcppArmadillo:RcppArmadillo-package]{RcppArmadillo}} packages
-was implemented.
+was implemented. Also, the \code{\link[future:multisession]{future}} and
+\code{\link[future.apply:future.apply-package]{future.apply}} packages are
+considered for parallel computation of bootstrap iterations. The progress
+of the bootstrap is shown via the
+\code{\link[progressr:progressr-package]{progressr}} package.
 }
 \examples{
 lgdp <- log(smoots::gdpUS$GDP)

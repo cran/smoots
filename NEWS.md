@@ -1,3 +1,26 @@
+# smoots 1.1.1
+
+- a minor bug in the automatically created plot title when applying 
+  plot.smoots() to an object returned by dsmooth() was fixed.
+- a notable performance increase was implemented for the algorithms
+  considered in the functions msmooth(), tsmooth() and dsmooth().
+- RcppArmadillo was added to Suggests to address a note on 
+  r-devel-linux-x86_64-fedora-clang. 
+- a few typos in the documentation were fixed.
+- an error in the description of the element 'ws' within lists returned by 
+  msmooth(), tsmooth(), dsmooth() and gsmooth() was fixed in the documentation.
+- an acknowledgment of the support by the German DFG project GZ-FE-1500-2-1 
+  was added to the DESCRIPTION file.
+- [[Rcpp::export]] was removed from C++ functions only used by other C++ 
+  functions.
+- minor R code simplifications were implemented.
+- the package now makes use of the future and future.apply packages to improve 
+  the performance of the bootstraps in the functions bootCast(), modelCast() 
+  and rollCast().
+- due to the implementation of parallel code, the argument msg of the functions 
+  bootCast(), modelCast() and rollCast() has been deprecated; instead they have 
+  two new arguments pb and cores.
+
 # smoots 1.1.0
 
 - the README file has been adjusted.

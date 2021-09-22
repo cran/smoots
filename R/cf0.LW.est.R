@@ -1,4 +1,6 @@
-
+#'
+#'@importFrom stats arima
+#'
 
 # Function for selecting M and estimating cf nonparametrically-----------------
 

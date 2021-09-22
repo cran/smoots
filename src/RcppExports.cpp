@@ -6,152 +6,83 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // fcastCpp
-NumericVector fcastCpp(arma::vec X, arma::vec innov, arma::vec beta, arma::vec alpha, double mu, int h);
-RcppExport SEXP _smoots_fcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP muSEXP, SEXP hSEXP) {
+arma::vec fcastCpp(const arma::vec& X, const arma::vec& innov, const arma::rowvec& ar, const arma::rowvec& ma, const double mu, const int h);
+RcppExport SEXP _smoots_fcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP arSEXP, SEXP maSEXP, SEXP muSEXP, SEXP hSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type innov(innovSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< int >::type h(hSEXP);
-    rcpp_result_gen = Rcpp::wrap(fcastCpp(X, innov, beta, alpha, mu, h));
+    Rcpp::traits::input_parameter< const arma::vec& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type innov(innovSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ar(arSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ma(maSEXP);
+    Rcpp::traits::input_parameter< const double >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const int >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(fcastCpp(X, innov, ar, ma, mu, h));
     return rcpp_result_gen;
 END_RCPP
 }
 // tfcastCpp
-NumericVector tfcastCpp(arma::vec X, arma::vec innov, NumericVector Fi, arma::vec beta, arma::vec alpha, double mu, int h);
-RcppExport SEXP _smoots_tfcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP FiSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP muSEXP, SEXP hSEXP) {
+arma::vec tfcastCpp(const arma::vec& X, const arma::vec& innov, const arma::vec& epsBoot, const arma::rowvec& ar, const arma::rowvec& ma, const double mu, const int h);
+RcppExport SEXP _smoots_tfcastCpp(SEXP XSEXP, SEXP innovSEXP, SEXP epsBootSEXP, SEXP arSEXP, SEXP maSEXP, SEXP muSEXP, SEXP hSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type innov(innovSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Fi(FiSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< int >::type h(hSEXP);
-    rcpp_result_gen = Rcpp::wrap(tfcastCpp(X, innov, Fi, beta, alpha, mu, h));
-    return rcpp_result_gen;
-END_RCPP
-}
-// arimaSimBootCpp
-NumericVector arimaSimBootCpp(NumericVector Fi, arma::vec beta, arma::vec alpha, double mu, int nStart);
-RcppExport SEXP _smoots_arimaSimBootCpp(SEXP FiSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP muSEXP, SEXP nStartSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type Fi(FiSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< int >::type nStart(nStartSEXP);
-    rcpp_result_gen = Rcpp::wrap(arimaSimBootCpp(Fi, beta, alpha, mu, nStart));
-    return rcpp_result_gen;
-END_RCPP
-}
-// acovCpp
-NumericVector acovCpp(NumericVector Xt, int lagMax);
-RcppExport SEXP _smoots_acovCpp(SEXP XtSEXP, SEXP lagMaxSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type Xt(XtSEXP);
-    Rcpp::traits::input_parameter< int >::type lagMax(lagMaxSEXP);
-    rcpp_result_gen = Rcpp::wrap(acovCpp(Xt, lagMax));
-    return rcpp_result_gen;
-END_RCPP
-}
-// seqNum
-NumericVector seqNum(int begin, int end);
-RcppExport SEXP _smoots_seqNum(SEXP beginSEXP, SEXP endSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type begin(beginSEXP);
-    Rcpp::traits::input_parameter< int >::type end(endSEXP);
-    rcpp_result_gen = Rcpp::wrap(seqNum(begin, end));
+    Rcpp::traits::input_parameter< const arma::vec& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type innov(innovSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type epsBoot(epsBootSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ar(arSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type ma(maSEXP);
+    Rcpp::traits::input_parameter< const double >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const int >::type h(hSEXP);
+    rcpp_result_gen = Rcpp::wrap(tfcastCpp(X, innov, epsBoot, ar, ma, mu, h));
     return rcpp_result_gen;
 END_RCPP
 }
 // cf0Cpp
-List cf0Cpp(NumericVector Xt);
+List cf0Cpp(const NumericVector Xt);
 RcppExport SEXP _smoots_cf0Cpp(SEXP XtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< const NumericVector >::type Xt(XtSEXP);
     rcpp_result_gen = Rcpp::wrap(cf0Cpp(Xt));
     return rcpp_result_gen;
 END_RCPP
 }
-// seqCpp
-arma::vec seqCpp(int from, int to);
-RcppExport SEXP _smoots_seqCpp(SEXP fromSEXP, SEXP toSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type from(fromSEXP);
-    Rcpp::traits::input_parameter< int >::type to(toSEXP);
-    rcpp_result_gen = Rcpp::wrap(seqCpp(from, to));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rseqCpp
-arma::rowvec rseqCpp(int from, int to);
-RcppExport SEXP _smoots_rseqCpp(SEXP fromSEXP, SEXP toSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type from(fromSEXP);
-    Rcpp::traits::input_parameter< int >::type to(toSEXP);
-    rcpp_result_gen = Rcpp::wrap(rseqCpp(from, to));
-    return rcpp_result_gen;
-END_RCPP
-}
-// factorialCpp
-int factorialCpp(int k);
-RcppExport SEXP _smoots_factorialCpp(SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(factorialCpp(k));
-    return rcpp_result_gen;
-END_RCPP
-}
 // gsmoothCalcCpp
-NumericVector gsmoothCalcCpp(arma::vec y, int v, int p, int mu, double b, int bb);
+arma::vec gsmoothCalcCpp(const arma::vec& y, const int v, const int p, const int mu, const double b, const int bb);
 RcppExport SEXP _smoots_gsmoothCalcCpp(SEXP ySEXP, SEXP vSEXP, SEXP pSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type v(vSEXP);
-    Rcpp::traits::input_parameter< int >::type p(pSEXP);
-    Rcpp::traits::input_parameter< int >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< double >::type b(bSEXP);
-    Rcpp::traits::input_parameter< int >::type bb(bbSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type v(vSEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const int >::type bb(bbSEXP);
     rcpp_result_gen = Rcpp::wrap(gsmoothCalcCpp(y, v, p, mu, b, bb));
     return rcpp_result_gen;
 END_RCPP
 }
 // gsmoothCalc2Cpp
-List gsmoothCalc2Cpp(arma::vec y, int v, int p, int mu, double b, int bb);
+List gsmoothCalc2Cpp(const arma::vec& y, const int v, const int p, const int mu, const double b, const int bb);
 RcppExport SEXP _smoots_gsmoothCalc2Cpp(SEXP ySEXP, SEXP vSEXP, SEXP pSEXP, SEXP muSEXP, SEXP bSEXP, SEXP bbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type v(vSEXP);
-    Rcpp::traits::input_parameter< int >::type p(pSEXP);
-    Rcpp::traits::input_parameter< int >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< double >::type b(bSEXP);
-    Rcpp::traits::input_parameter< int >::type bb(bbSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type v(vSEXP);
+    Rcpp::traits::input_parameter< const int >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const int >::type bb(bbSEXP);
     rcpp_result_gen = Rcpp::wrap(gsmoothCalc2Cpp(y, v, p, mu, b, bb));
     return rcpp_result_gen;
 END_RCPP
@@ -160,13 +91,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_smoots_fcastCpp", (DL_FUNC) &_smoots_fcastCpp, 6},
     {"_smoots_tfcastCpp", (DL_FUNC) &_smoots_tfcastCpp, 7},
-    {"_smoots_arimaSimBootCpp", (DL_FUNC) &_smoots_arimaSimBootCpp, 5},
-    {"_smoots_acovCpp", (DL_FUNC) &_smoots_acovCpp, 2},
-    {"_smoots_seqNum", (DL_FUNC) &_smoots_seqNum, 2},
     {"_smoots_cf0Cpp", (DL_FUNC) &_smoots_cf0Cpp, 1},
-    {"_smoots_seqCpp", (DL_FUNC) &_smoots_seqCpp, 2},
-    {"_smoots_rseqCpp", (DL_FUNC) &_smoots_rseqCpp, 2},
-    {"_smoots_factorialCpp", (DL_FUNC) &_smoots_factorialCpp, 1},
     {"_smoots_gsmoothCalcCpp", (DL_FUNC) &_smoots_gsmoothCalcCpp, 6},
     {"_smoots_gsmoothCalc2Cpp", (DL_FUNC) &_smoots_gsmoothCalc2Cpp, 6},
     {NULL, NULL, 0}

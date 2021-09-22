@@ -22,8 +22,10 @@ confBounds(
 and \code{1}; \code{0.95} is the default.}
 
 \item{p}{the order of polynomial used for the parametric polynomial
-regression; must satisfy \eqn{0 \leq}{0 \le} \code{p} \eqn{\leq 3}{\le 3};
-set to \code{1} by default.}
+regression that is conducted as a benchmark for the trend function;
+must satisfy \eqn{0 \leq}{0 \le} \code{p} \eqn{\leq 3}{\le 3}; set to
+\code{1} by default; is irrelevant, if a derivative of the trend of order
+greater than zero is being analyzed.}
 
 \item{plot}{a logical value; for \code{plot = TRUE}, the default, a plot is
 created.}
@@ -53,10 +55,10 @@ argument.}
 \item{b.ub}{a numeric vector with one element that represents the adjusted
 bandwidth for the unbiased trend estimation.}
 \item{p.estim}{a numeric vector with the estimates following the parametric
-regression defined by \code{p}; is \code{NA}, if the order of derivative of
-the trend that is being estimated is not equal to \eqn{0}; the values
-are obtained with respect to the rescaled time points on the interval
-\eqn{[0, 1]}.}
+regression defined by \code{p} that is conducted as a benchmark for the trend
+function; for the trend's derivatives or for \code{p = 0}, a constant value
+is the benchmark; the values are obtained with respect to the rescaled time
+points on the interval \eqn{[0, 1]}.}
 \item{n}{the number of observations.}
 \item{np.estim}{a data frame with the three (numeric) columns \strong{ye.ub},
 \strong{lower} and \strong{upper}; in \strong{ye.ub} the unbiased trend
@@ -82,8 +84,8 @@ short-range dependence.
 The purpose of this function is the estimation of reasonable confidence
 intervals for the nonparametric trend function and its derivatives. The
 optimal bandwidth minimizes the Asymptotic Mean Integrated Squared Error
-(AMISE) criterion, however, this value is (usually) biased. The bias is then
-(approximately)
+(AMISE) criterion, however, local polynomial estimates are (usually) biased.
+The bias is then (approximately)
 \deqn{\frac{h^{k - v} m^{(k)}(x) \beta_{(\nu, k)}}{k!},}{h^[k-v]
 m^(k)(x)\beta_(\nu,k) / k!,}
 where \eqn{p} is the order of the local polynomials, \eqn{k = p + 1} is the
@@ -100,7 +102,7 @@ bandwidth with a smaller order than the optimal bandwidth, is conducted.
 \eqn{h_{A}}{h_[A]} is the optimal bandwidth, is implemented.
 
 Following this idea, we have that
-\deqn{\sqrt{nh}[m^{(\nu)} - \hat{m}^{(\nu)}(x)]}{(nh)^[1/2] (m^(v)(x) -
+\deqn{\sqrt{nh}[m^{(\nu)}(x) - \hat{m}^{(\nu)}(x)]}{(nh)^[1/2] (m^(v)(x) -
 hat(m)^(v)(x))}
 converges to
 \deqn{N(0,2\pi c_f R(x))}

@@ -7,8 +7,10 @@
 #'@param plot a logical value; for \code{plot = TRUE}, the default, a plot is
 #'created.
 #'@param p the order of polynomial used for the parametric polynomial
-#'regression; must satisfy \eqn{0 \leq}{0 \le} \code{p} \eqn{\leq 3}{\le 3};
-#'set to \code{1} by default.
+#'regression that is conducted as a benchmark for the trend function;
+#'must satisfy \eqn{0 \leq}{0 \le} \code{p} \eqn{\leq 3}{\le 3}; set to
+#'\code{1} by default; is irrelevant, if a derivative of the trend of order
+#'greater than zero is being analyzed.
 #'@param showPar set to \code{TRUE}, if the parametric fitted values are to be
 #'shown against the unbiased estimates and the confidence bounds for
 #'\code{plot = TRUE}; the default is \code{TRUE}.
@@ -35,8 +37,8 @@
 #'The purpose of this function is the estimation of reasonable confidence
 #'intervals for the nonparametric trend function and its derivatives. The
 #'optimal bandwidth minimizes the Asymptotic Mean Integrated Squared Error
-#'(AMISE) criterion, however, this value is (usually) biased. The bias is then
-#'(approximately)
+#'(AMISE) criterion, however, local polynomial estimates are (usually) biased.
+#'The bias is then (approximately)
 #'\deqn{\frac{h^{k - v} m^{(k)}(x) \beta_{(\nu, k)}}{k!},}{h^[k-v]
 #'m^(k)(x)\beta_(\nu,k) / k!,}
 #'where \eqn{p} is the order of the local polynomials, \eqn{k = p + 1} is the
@@ -53,7 +55,7 @@
 #'\eqn{h_{A}}{h_[A]} is the optimal bandwidth, is implemented.
 #'
 #'Following this idea, we have that
-#'\deqn{\sqrt{nh}[m^{(\nu)} - \hat{m}^{(\nu)}(x)]}{(nh)^[1/2] (m^(v)(x) -
+#'\deqn{\sqrt{nh}[m^{(\nu)}(x) - \hat{m}^{(\nu)}(x)]}{(nh)^[1/2] (m^(v)(x) -
 #'hat(m)^(v)(x))}
 #'converges to
 #'\deqn{N(0,2\pi c_f R(x))}
@@ -99,6 +101,9 @@
 #'
 #'@export
 #'
+#'@importFrom graphics lines polygon
+#'@importFrom stats as.formula lm qnorm
+#'
 #'@references
 #' Beran, J. and Feng, Y. (2002). Local polynomial fitting with long-memory,
 #' short-memory and antipersistent errors. Annals of the Institute of
@@ -126,10 +131,10 @@
 #'\item{b.ub}{a numeric vector with one element that represents the adjusted
 #'bandwidth for the unbiased trend estimation.}
 #'\item{p.estim}{a numeric vector with the estimates following the parametric
-#'regression defined by \code{p}; is \code{NA}, if the order of derivative of
-#'the trend that is being estimated is not equal to \eqn{0}; the values
-#'are obtained with respect to the rescaled time points on the interval
-#'\eqn{[0, 1]}.}
+#'regression defined by \code{p} that is conducted as a benchmark for the trend
+#'function; for the trend's derivatives or for \code{p = 0}, a constant value
+#'is the benchmark; the values are obtained with respect to the rescaled time
+#'points on the interval \eqn{[0, 1]}.}
 #'\item{n}{the number of observations.}
 #'\item{np.estim}{a data frame with the three (numeric) columns \strong{ye.ub},
 #'\strong{lower} and \strong{upper}; in \strong{ye.ub} the unbiased trend
@@ -241,7 +246,7 @@ confBounds <- function(obj, alpha = 0.95, p = c(0, 1, 2, 3), plot = TRUE,
   cf0Calc <- cf0Method[[obj[["Mcf"]]]]
 
   ub.est <- gsmoothCalc2Cpp(y, n.plot - 1, p.obj, mu, b.ub, bb)
-  ye.ub <- ub.est$ye
+  ye.ub <- c(ub.est$ye)
 
   n <- length(y)
   t <- 1:n
@@ -267,7 +272,7 @@ confBounds <- function(obj, alpha = 0.95, p = c(0, 1, 2, 3), plot = TRUE,
 
   if (n.plot == 1) {
     bv <- bv_func(b.ub)
-    ye.ub.cf <- gsmoothCalcCpp(y, n.plot - 1, pp, mu, bv, bb)
+    ye.ub.cf <- c(gsmoothCalcCpp(y, n.plot - 1, pp, mu, bv, bb))
     cf <- cf0Calc(y - ye.ub.cf)
   } else {
     pilot.est <- msmoothCalc(y, p = pp, mu = mu, bStart = obj$bStart.p,
@@ -275,7 +280,7 @@ confBounds <- function(obj, alpha = 0.95, p = c(0, 1, 2, 3), plot = TRUE,
     b.pilot.ub <- pilot.est$b0 ^ ((2 * (pilot.est$p + 1) + 1) /
       (2 * (pilot.est$p + 1)))
     bv.pilot <- bv_func(b.pilot.ub)
-    pilot.ub.est.cf <- gsmoothCalcCpp(y, 0, pp, mu, bv.pilot, 1)
+    pilot.ub.est.cf <- c(gsmoothCalcCpp(y, 0, pp, mu, bv.pilot, 1))
     cf <- cf0Calc(y - pilot.ub.est.cf)
   }
 
@@ -286,7 +291,7 @@ confBounds <- function(obj, alpha = 0.95, p = c(0, 1, 2, 3), plot = TRUE,
   n.ws <- length(R.x.sub)
   boundary <- (n.ws - 1) / 2
   R.x <- c(R.x.sub[1:boundary], rep(R.x.sub[boundary + 1], n - 2 * boundary),
-    R.x.sub[(boundary + 2):(2 * boundary + 1)])
+    R.x.sub[(boundary + 2):n.ws])
   norm.value <- qnorm(alpha + ((1 - alpha) / 2), mean = 0, sd = 1)
 
   est.norm <- norm.value * sqrt(cf * R.x)
@@ -311,13 +316,14 @@ confBounds <- function(obj, alpha = 0.95, p = c(0, 1, 2, 3), plot = TRUE,
       }
       color.n <- color.name(dots[["col"]])
       if (p != 0 && showPar == TRUE) {
-        plot.title <- paste0("The parametric (blue) and nonparametric ",
-          "unbiased ", title.der, " derivative (", color.n, ")\ntogether ",
-          "with ", alpha * 100, "%-confidence intervals (grey)")
+        plot.title <- paste0("The parametric (blue) and the ",
+          "nonparametric unbiased ", title.der, " derivative (",
+          color.n, ")\nof the trend together ", "with ", alpha * 100,
+          "%-confidence intervals (grey)")
       } else {
         plot.title <- paste0("The nonparametric unbiased ",
-          title.der, " derivative (", color.n, ")\ntogether with ",
-          alpha * 100, "%-confidence intervals (grey)")
+          title.der, " derivative (", color.n, ")\nof the trend together ",
+          "with ", alpha * 100, "%-confidence intervals (grey)")
       }
       dots[["main"]] <- plot.title
     }
@@ -359,7 +365,7 @@ confBounds <- function(obj, alpha = 0.95, p = c(0, 1, 2, 3), plot = TRUE,
     dots[["x"]] <- x_coord
     dots[["y"]] <- ye.ub
     dots[["type"]] <- type.sub
-    do.call(what = graphics::lines, args = dots)
+    do.call(what = lines, args = dots)
     if (showPar == TRUE & !is.na(ye.par[1])) {
       lwd.sub <- dots[["lwd"]]
       lines(x_coord, ye.par, lty = 1, col = "deepskyblue4", lwd = lwd.sub)

@@ -15,7 +15,8 @@ A data frame with 1668 rows and 3 variables:
 }
 \source{
 The data was obtained from the Goddard Institute for Space Studies
-(part of the National Aeronautics and Space Administration [NASA]).
+(part of the National Aeronautics and Space Administration [NASA])
+ (accessed: 2019-09-25).
 
 \url{https://data.giss.nasa.gov/gistemp/tabledata_v4/NH.Ts+dSST.txt}
 }

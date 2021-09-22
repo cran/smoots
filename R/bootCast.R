@@ -33,16 +33,20 @@
 #'@param it an integer that represents the total number of iterations, i.e.,
 #'the number of simulated series; is set to \code{10000} by default; decimal
 #'numbers will be rounded off to integers.
+#'@param msg this argument is deprecated; make use of the argument \code{pb}
+#'instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
+#'any one-element numeric vector will lead to \code{pb = TRUE}.
+#'@param pb a logical value; for \code{pb = TRUE}, a progress bar will be shown
+#'in the console.
+#'@param cores an integer value >0 that states the number of (logical) cores to
+#'use in the bootstrap (or \code{NULL}); the default is the maximum number of
+#'available cores
+#'(via \code{\link[future:availableCores]{future::availableCores}}); for
+#'\code{cores = NULL}, parallel computation is disabled.
 #'@param alpha a numeric vector of length 1 with \eqn{0 < } \code{alpha}
 #'\eqn{ < 1}; the forecasting intervals will be obtained based on the
 #'confidence level (\eqn{100}\code{alpha})-percent; is set to
 #'\code{alpha = 0.95} by default, i.e., a \eqn{95}-percent confidence level.
-#'@param msg an integer \eqn{\geq 1}{\ge 1}; controls the iteration status
-#'report that is frequently printed to the R console; for \code{msg = NA},
-#'nothing will be printed, for any positive integer any message
-#''Iteration: \eqn{i}' with \eqn{i} being divisible by \code{msg} without a
-#'rest will be shown in the console; is set to \code{msg = 1000} by default;
-#'decimal numbers will be rounded off to integers.
 #'@param export.error a single logical value; if the argument is set to
 #'\code{TRUE}, a list is returned instead of a matrix (\code{FALSE}); the
 #'first element of the list is the usual forecasting matrix, whereas the second
@@ -65,7 +69,7 @@
 #'
 #'@details
 #'This function is part of the \code{smoots} package and was implemented under
-#'version 1.1.0. For a given time series \eqn{X_[t]}, \eqn{t = 1, 2, ..., n},
+#'version 1.1.0. For a given time series \eqn{X_t}{X_[t]}, \eqn{t = 1, 2, ..., n},
 #'the point forecasts and the respective forecasting intervals will be
 #'calculated. It is assumed that the series follows an ARMA(\eqn{p,q}) model
 #'\deqn{X_t - \mu = \epsilon_t + \beta_1 (X_{t-1} - \mu) + ... + \beta_p
@@ -149,13 +153,15 @@
 #'\code{alpha}\eqn{)/2} of the bootstrapped forecasting error distribution
 #'will be obtained.
 #'
-#'Since this functions needs a large computation time, especially for series
-#'with high numbers of observations, it will regularly print an iteration
-#'status to the R console. The user can adjust the frequency of these messages
-#'via the argument \code{msg}. If it is set to \code{NA}, no messages will
-#'returned at all, whereas for any integer number \eqn{> 0}, any message
-#'"Iteration: \eqn{i}" will be printed, where \eqn{i} is either equal to
-#'\eqn{1} or divisable by \code{msg} without a rest.
+#'Since this bootstrap approach needs a lot of computation time, especially for
+#'series with high numbers of observations and when fitting models with many
+#'parameters, parallel computation of the bootstrap iterations is enabled.
+#'With \code{cores}, the number of cores can be defined with an integer.
+#'Nonetheless, for \code{cores = NULL}, no cluster is created and therefore
+#'the parallel computation is disabled. Note that the bootstrapped results are
+#'fully reproducible for all cluster sizes. The progress of the bootstrap can
+#'be observed in the R console, where a progress bar and the estimated
+#'remaining time are displayed for \code{pb = TRUE}.
 #'
 #'If the argument \code{export.error} is set to \code{TRUE}, the output of
 #'the function is a list instead of a matrix with additional information on
@@ -175,13 +181,17 @@
 #'for the estimation of ARMA models. Furthermore, to increase the performance,
 #'C++ code via the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
 #'\code{\link[RcppArmadillo:RcppArmadillo-package]{RcppArmadillo}} packages was
-#'implemented.
+#'implemented. Also, the \code{\link[future:multisession]{future}} and
+#'\code{\link[future.apply:future.apply-package]{future.apply}} packages are
+#'considered for parallel computation of bootstrap iterations. The progress
+#'of the bootstrap is shown via the
+#'\code{\link[progressr:progressr-package]{progressr}} package.
 #'
 #'@md
 #'
 #'@return The function returns a \eqn{3} by \eqn{h} matrix with its columns
 #'representing the future time points and the point forecasts, the lower
-#'boundaries of the forecasting intervals and the upper boundaries of the
+#'bounds of the forecasting intervals and the upper bounds of the
 #'forecasting intervals as the rows. If the argument \code{plot} is set to
 #'\code{TRUE}, a plot of the forecasting results is created.
 #'
@@ -190,13 +200,20 @@
 #'
 #'\describe{
 #'\item{fcast}{the \eqn{3} by \eqn{h} matrix forecasting matrix with point
-#'forecasts and forecasting intervals.}
+#'forecasts and bounds of the forecasting intervals.}
 #'\item{error}{a \code{it} by \eqn{h} matrix, where each column represents a
 #'future time point \eqn{n + 1, n + 2, ..., n + h}; in each column the
 #'respective \code{it} simulated forecasting errors are saved.}
 #'}
 #'
 #'@export
+#'
+#'@importFrom graphics lines points polygon
+#'@importFrom stats arima quantile arima.sim
+#'@importFrom utils head tail
+#'@importFrom future plan sequential multisession
+#'@importFrom future.apply future_lapply
+#'@importFrom progressr progressor with_progress handler_progress
 #'
 #'@references
 #' Feng, Y., Gries, T. and Fritz, M. (2020). Data-driven
@@ -243,23 +260,24 @@
 #'# Quick application with low number of iterations
 #'# (not recommended in practice)
 #'result <- bootCast(X = X, p = 2, q = 1, include.mean = TRUE,
-#'  n.start = n.start, h = 5, it = 50, msg = 10, plot = TRUE,
+#'  n.start = n.start, h = 5, it = 10, cores = 2, plot = TRUE,
 #'  lty = 3, col = "forestgreen", xlim = c(1950, 2005), type = "b",
-#'  main = "Examplary title", pch = "*")
+#'  main = "Exemplary title", pch = "*")
 #'result
 #'
 #'### Example 2: Application with more iterations ###
 #'\dontrun{
 #'result2 <- bootCast(X = X, p = 2, q = 1, include.mean = TRUE,
-#'  n.start = n.start, h = 5, it = 10000, msg = 1000, plot = TRUE,
+#'  n.start = n.start, h = 5, it = 10000, cores = 2, plot = TRUE,
 #'  lty = 3, col = "forestgreen", xlim = c(1950, 2005),
-#'  main = "Examplary title")
+#'  main = "Exemplary title")
 #'result2
 #'
 #'}
 
 bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
-  n.start = 1000, h = 1, it = 10000, alpha = 0.95, msg = 1000,
+  n.start = 1000, h = 1, it = 10000, msg, pb = TRUE,
+  cores = future::availableCores(), alpha = 0.95,
   export.error = FALSE, plot = FALSE, ...) {
 
   if (length(X) <= 1 || !all(!is.na(X)) || !is.numeric(X)) {
@@ -296,11 +314,27 @@ bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
     stop("The argument 'it' must be a single positive integer value.")
   }
   it <- floor(it)
-  if (length(msg) != 1 || !(is.na(msg) || is.numeric(msg)) ||
-    (is.numeric(msg) && msg < 1)) {
-    stop("The argument 'msg' must either be NA or a single positive integer.")
+  if (!missing(msg)) {
+    warning("The argument 'msg' is deprecated. Please make use of ",
+     "the argument 'pb' instead.", call. = FALSE)
+
+    if (!is.null(msg) && length(msg) == 1 && (is.na(msg) || is.numeric(msg))) {
+      if (is.na(msg)) {
+        pb <- FALSE
+      } else {
+        pb <- TRUE
+      }
+    } else {
+      stop("The argument 'msg' must be a one-element numeric vector or NA.")
+    }
+
   }
-  if (!is.na(msg) && is.numeric(msg)) msg <- floor(msg)
+  if (length(pb) != 1 || is.na(pb) || !is.logical(pb)) {
+    stop("The argument 'pb' must be a single logical value.")
+  }
+  if (!(length(cores) %in% c(0, 1)) || !(is.null(cores) || !is.na(cores) || is.numeric(cores))) {
+    stop("The argument 'cores' must be a single integer value.")
+  }
   if (length(plot) != 1 || is.na(plot) || !plot %in% c(TRUE, FALSE)) {
     stop("The argument 'plot' must be a single logical value (TRUE or FALSE).")
   }
@@ -314,9 +348,7 @@ bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
   }
 
   if (is.null(p) && is.null(q)) {
-    if (!is.na(msg)) {
-      message("Model selection in progress.")
-    }
+    message("Model selection in progress.")
     p.max <- 5
     q.max <- 5
     BICmat <- unname(critMatrix(X, p.max = p.max, q.max = q.max,
@@ -325,92 +357,46 @@ bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
     pq.opt <- which(BICmat == min(BICmat), arr.ind = TRUE) - 1
     p <- pq.opt[[1]]
     q <- pq.opt[[2]]
-    if (!is.na(msg)) {
-      message("Orders p=", p, " and q=", q, " were selected.")
-    }
+    message("Orders p=", p, " and q=", q, " were selected.")
   }
   if (is.null(p)) p <- 0
   if (is.null(q)) q <- 0
   p <- floor(p)
   q <- floor(q)
 
-  suppressWarnings(pilot.est <- arima(X, order = c(p, 0, q),
-    include.mean = include.mean))
-  coefs <- pilot.est$coef
-  lc <- length(coefs)
-  if (include.mean == TRUE) {
-    mu <- coefs[["intercept"]]
+  bootSet <- bootSetup(X, p, q, include.mean, h, n.start)
+  bootF <- bootSet[[1]]
+  X.fcast <- bootSet[[2]]
+  old.plan <- future::plan()
+  if (is.null(cores)) {
+    future::plan(future::sequential)
   } else {
-    mu = 0
-    mu.star <- 0
+    future::plan(future::multisession, workers = cores)
   }
-  err.mat <- matrix(NA, ncol = h, nrow = it)
-  innov <- pilot.est$residuals
-  if (p > 0) {
-    beta <- head(coefs, p)
-  } else {
-    beta <- 0
-    beta.star <- 0
-  }
-  if (q > 0) {
-    alph <- head(coefs[(p + 1):lc], q)
-  } else {
-    alph <- 0
-    alph.star <- 0
-  }
+  on.exit(future::plan(old.plan))
 
-  X.fcast <- fcastCpp(X, innov, beta, alph, mu, h)
-  Fi <- innov - mean(innov)
+  progressr::with_progress({
+    if (pb) {
+      prog <- progressr::progressor(it / 100)
+    } else {
+      prog <- function() {invisible(NULL)}
+    }
+    errs <- future.apply::future_lapply(1:it,
+      function(x, ...) {
+        out <- bootF(x)
+        if (x %% 100 == 0) prog()
+        out
+      }, future.seed = TRUE)
 
-  i <- 1
-  while (i <= it) {
-    if (!is.na(msg) && i %% msg == 0) {
-      message("Iteration: ", i)
-    }
-    X.star <- arimaSimBootCpp(Fi, beta, alph, mu, n.start)
-    est <- suppressWarnings(
-      tryCatch(
-        arima(X.star, order = c(p, 0, q), include.mean = include.mean),
-        error = function(c) {
-          tryCatch(
-            arima(X.star, order = c(p, 0, q),
-              include.mean = include.mean, method = "ML", init = coefs),
-            error = function(c2) {
-              arima(X.star, order = c(p, 0, q),
-                include.mean = include.mean, method = "ML")
-            }
-          )
-        }
-      )
-    )
-    coef <- est$coef
-    if (p > 0) {
-      beta.star <- coef[1:p]
-    }
-    if (q > 0) {
-      alph.star <- coef[(p + 1):(p + q)]
-    }
-    if (include.mean == TRUE) {
-      mu.star <- coef[["intercept"]]
-    }
+  }, handlers = progressr::handler_progress)
 
-#      eps.star <- residFitCpp(X, beta.star, alph.star, mu.star)
-      # DS 26/06/2020: Replace own function with arima
-    eps.star <- suppressWarnings(arima(X, order = c(p, 0, q),
-      fixed = c(head(beta.star, p), head(alph.star, q),
-      mu.star))[["residuals"]])
-    X.star.hat <- fcastCpp(X, eps.star, beta.star, alph.star, mu.star, h)
-    X.true <- tfcastCpp(X, innov, Fi, beta, alph, mu, h)
-    err <- X.true - X.star.hat
-    err.mat[i, ] <- err
+  err.mat <- matrix(unlist(errs), nrow = it, ncol = h, byrow = TRUE)
 
-    i <- i + 1
-  }
   alpha.s <- 1 - alpha
   quants <- apply(err.mat, MARGIN = 2, quantile,
                   probs = c(alpha.s / 2, 1 - alpha.s / 2))
-  for (i in 1:h) {
-    quants[, i] <- quants[, i] + X.fcast[i]
+  for (i in 1:2) {
+    quants[i, ] <- quants[i, ] + X.fcast
   }
   out <- rbind(fcast = X.fcast, quants)
   colnames(out) <- paste0("k=", 1:h)
@@ -459,4 +445,72 @@ bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
 
   out
 
+}
+
+bootSetup <- function(X, p, q, include.mean, h, n.start) {
+  force(n.start)
+  n <- length(X)
+  estMain <- suppressWarnings(stats::arima(X, order = c(p, 0, q),
+    include.mean = include.mean))
+  innov <- estMain$residuals
+  Fi <- innov - mean(innov)
+  coefs <- estMain$coef
+  rm(estMain)
+  ar <- numeric(0)
+  ma <- numeric(0)
+  ar.t <- 0
+  ma.t <- 0
+  mu <- 0
+  if (p > 0) {
+    ar <- ar.t <- coefs[1:p]
+  }
+  if (q > 0) {
+    ma <- ma.t <- coefs[(p + 1):(p + q)]
+  }
+  if (include.mean) {
+    mu <- coefs[["intercept"]]
+  }
+  rm(coefs)
+  X.fcast <- c(fcastCpp(X, innov, ar, ma, mu, h))
+
+  ar.star <- 0
+  ma.star <- 0
+  mu.star <- 0
+
+  list(
+  function(x) {
+    eps_boot <- sample(Fi, size = n.start + n + h, replace = TRUE)
+    X.star <- as.numeric(stats::arima.sim(model = list(ar = ar, ma = ma),
+      n = n, n.start = n.start, innov = eps_boot[(n.start + 1):(n.start + n)],
+      start.innov = eps_boot[1:n.start])) + mu
+    est <- suppressWarnings(
+      tryCatch(
+        stats::arima(X.star, order = c(p, 0, q), include.mean = include.mean),
+        error = function(c1) {
+          stats::arima(X.star, order = c(p, 0, q),
+            include.mean = include.mean, method = "ML")
+        }
+      )
+    )
+
+    coef <- est$coef
+    if (p > 0) {
+      ar.star <- coef[1:p]
+    }
+    if (q > 0) {
+      ma.star <- coef[(p + 1):(p + q)]
+    }
+    if (include.mean) {
+      mu.star <- coef[["intercept"]]
+    }
+
+    eps.star <- suppressWarnings(stats::arima(X, order = c(p, 0, q),
+      fixed = c(head(ar.star, p), head(ma.star, q),
+        mu.star))[["residuals"]])
+    X.star.hat <- c(fcastCpp(X, eps.star, ar.star, ma.star, mu.star, h))
+    X.true <- c(tfcastCpp(X, innov,
+      eps_boot[(n.start + n + 1):(n.start + n + h)], ar.t, ma.t, mu, h))
+    X.true - X.star.hat
+  },
+  X.fcast)
 }

@@ -1,7 +1,7 @@
 Package: smoots
 Type: Package
 Title: Nonparametric Estimation of the Trend and Its Derivatives in TS
-Version: 1.1.0
+Version: 1.1.1
 Description: The nonparametric trend and its derivatives in equidistant time 
     series (TS) with short-memory stationary errors can be estimated. The 
     estimation is conducted via local polynomial regression using an 
@@ -15,27 +15,43 @@ Description: The nonparametric trend and its derivatives in equidistant time
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
-Imports: stats, utils, graphics, grDevices, Rcpp
-Suggests: knitr, rmarkdown, fGarch
+RoxygenNote: 7.1.2
+Imports: stats, utils, graphics, grDevices, Rcpp (>= 1.0.7), future (>=
+        1.22.1), future.apply (>= 1.8.1), progressr (>= 0.8.0),
+        progress (>= 1.2.2)
+Suggests: knitr, rmarkdown, fGarch, RcppArmadillo (>= 0.10.6.0.0),
+        testthat (>= 3.0.0)
 LinkingTo: Rcpp, RcppArmadillo
 Depends: R (>= 2.10)
-Authors@R: c(
-  person("Yuanhua", "Feng", role = "aut", 
-    comment = "Paderborn University, Germany"),
-  person("Sebastian", "Letmathe", role = "aut",
-    comment = "Paderborn University, Germany"),
-  person("Dominik", "Schulz", role = c("aut", "cre"), 
-    email = "schulzd@mail.uni-paderborn.de",
-    comment = "Paderborn University, Germany"),
-  person("Thomas", "Gries", role = "ctb",
-    comment = "Paderborn University, Germany"),
-  person("Marlon", "Fritz", role = "ctb",
-    comment = "Paderborn University, Germany"))         
+Authors@R: 
+    c(person(given = "Yuanhua",
+             family = "Feng",
+             role = "aut",
+             comment = "Paderborn University, Germany"),
+      person(given = "Sebastian",
+             family = "Letmathe",
+             role = "aut",
+             comment = "Paderborn University, Germany"),
+      person(given = "Dominik",
+             family = "Schulz",
+             role = c("aut", "cre"),
+             email = "schulzd@mail.uni-paderborn.de",
+             comment = "Paderborn University, Germany"),
+      person(given = "Thomas",
+             family = "Gries",
+             role = "ctb",
+             comment = "Paderborn University, Germany"),
+      person(given = "Marlon",
+             family = "Fritz",
+             role = "ctb",
+             comment = "Paderborn University, Germany"))
 URL: https://wiwi.uni-paderborn.de/en/dep4/feng/
         https://wiwi.uni-paderborn.de/dep4/gries/
+Acknowledgments: This work was supported by the German DFG project
+        GZ-FE-1500-2-1.
+Config/testthat/edition: 3
 NeedsCompilation: yes
-Packaged: 2021-05-11 14:58:44 UTC; domin
+Packaged: 2021-09-22 10:12:39 UTC; Dominik Schulz
 Author: Yuanhua Feng [aut] (Paderborn University, Germany),
   Sebastian Letmathe [aut] (Paderborn University, Germany),
   Dominik Schulz [aut, cre] (Paderborn University, Germany),
@@ -43,4 +59,4 @@ Author: Yuanhua Feng [aut] (Paderborn University, Germany),
   Marlon Fritz [ctb] (Paderborn University, Germany)
 Maintainer: Dominik Schulz <schulzd@mail.uni-paderborn.de>
 Repository: CRAN
-Date/Publication: 2021-05-12 00:50:02 UTC
+Date/Publication: 2021-09-22 10:40:02 UTC

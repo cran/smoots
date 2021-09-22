@@ -67,7 +67,7 @@ points will be calculated automatically.}
 \value{
 The function returns a \eqn{3} by \eqn{h} matrix with its columns
 representing the future time points and the point forecasts, the lower
-boundaries of the forecasting intervals and the upper boundaries of the
+bounds of the forecasting intervals and the upper bounds of the
 forecasting intervals as the rows. If the argument \code{plot} is set to
 \code{TRUE}, a plot of the forecasting results is created.
 }
@@ -167,7 +167,7 @@ X <- arima.sim(model = list(ar = c(1.2, -0.7), ma = 0.63), n = n,
 # Application of normCast()
 result <- normCast(X = X, p = 2, q = 1, include.mean = TRUE, h = 5,
  plot = TRUE, xlim = c(1971, 2005), col = "deepskyblue4",
- type = "b", lty = 3, pch = 16, main = "Examplary title")
+ type = "b", lty = 3, pch = 16, main = "Exemplary title")
 result
 }
 \references{

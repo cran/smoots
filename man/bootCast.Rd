@@ -12,8 +12,10 @@ bootCast(
   n.start = 1000,
   h = 1,
   it = 10000,
+  msg,
+  pb = TRUE,
+  cores = future::availableCores(),
   alpha = 0.95,
-  msg = 1000,
   export.error = FALSE,
   plot = FALSE,
   ...
@@ -56,17 +58,23 @@ obtained for the time points \eqn{n + 1} to \eqn{n + h}; is set to
 the number of simulated series; is set to \code{10000} by default; decimal
 numbers will be rounded off to integers.}
 
+\item{msg}{this argument is deprecated; make use of the argument \code{pb}
+instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
+any one-element numeric vector will lead to \code{pb = TRUE}.}
+
+\item{pb}{a logical value; for \code{pb = TRUE}, a progress bar will be shown
+in the console.}
+
+\item{cores}{an integer value >0 that states the number of (logical) cores to
+use in the bootstrap (or \code{NULL}); the default is the maximum number of
+available cores
+(via \code{\link[future:availableCores]{future::availableCores}}); for
+\code{cores = NULL}, parallel computation is disabled.}
+
 \item{alpha}{a numeric vector of length 1 with \eqn{0 < } \code{alpha}
 \eqn{ < 1}; the forecasting intervals will be obtained based on the
 confidence level (\eqn{100}\code{alpha})-percent; is set to
 \code{alpha = 0.95} by default, i.e., a \eqn{95}-percent confidence level.}
-
-\item{msg}{an integer \eqn{\geq 1}{\ge 1}; controls the iteration status
-report that is frequently printed to the R console; for \code{msg = NA},
-nothing will be printed, for any positive integer any message
-'Iteration: \eqn{i}' with \eqn{i} being divisible by \code{msg} without a
-rest will be shown in the console; is set to \code{msg = 1000} by default;
-decimal numbers will be rounded off to integers.}
 
 \item{export.error}{a single logical value; if the argument is set to
 \code{TRUE}, a list is returned instead of a matrix (\code{FALSE}); the
@@ -93,7 +101,7 @@ points will be calculated automatically.}
 \value{
 The function returns a \eqn{3} by \eqn{h} matrix with its columns
 representing the future time points and the point forecasts, the lower
-boundaries of the forecasting intervals and the upper boundaries of the
+bounds of the forecasting intervals and the upper bounds of the
 forecasting intervals as the rows. If the argument \code{plot} is set to
 \code{TRUE}, a plot of the forecasting results is created.
 
@@ -102,7 +110,7 @@ elements is returned instead.
 
 \describe{
 \item{fcast}{the \eqn{3} by \eqn{h} matrix forecasting matrix with point
-forecasts and forecasting intervals.}
+forecasts and bounds of the forecasting intervals.}
 \item{error}{a \code{it} by \eqn{h} matrix, where each column represents a
 future time point \eqn{n + 1, n + 2, ..., n + h}; in each column the
 respective \code{it} simulated forecasting errors are saved.}
@@ -115,7 +123,7 @@ via bootstrap, by means of this function.
 }
 \details{
 This function is part of the \code{smoots} package and was implemented under
-version 1.1.0. For a given time series \eqn{X_[t]}, \eqn{t = 1, 2, ..., n},
+version 1.1.0. For a given time series \eqn{X_t}{X_[t]}, \eqn{t = 1, 2, ..., n},
 the point forecasts and the respective forecasting intervals will be
 calculated. It is assumed that the series follows an ARMA(\eqn{p,q}) model
 \deqn{X_t - \mu = \epsilon_t + \beta_1 (X_{t-1} - \mu) + ... + \beta_p
@@ -199,13 +207,15 @@ the quantiles \eqn{(1 - } \code{alpha}\eqn{)/2} and \eqn{1 - (1 - }
 \code{alpha}\eqn{)/2} of the bootstrapped forecasting error distribution
 will be obtained.
 
-Since this functions needs a large computation time, especially for series
-with high numbers of observations, it will regularly print an iteration
-status to the R console. The user can adjust the frequency of these messages
-via the argument \code{msg}. If it is set to \code{NA}, no messages will
-returned at all, whereas for any integer number \eqn{> 0}, any message
-"Iteration: \eqn{i}" will be printed, where \eqn{i} is either equal to
-\eqn{1} or divisable by \code{msg} without a rest.
+Since this bootstrap approach needs a lot of computation time, especially for
+series with high numbers of observations and when fitting models with many
+parameters, parallel computation of the bootstrap iterations is enabled.
+With \code{cores}, the number of cores can be defined with an integer.
+Nonetheless, for \code{cores = NULL}, no cluster is created and therefore
+the parallel computation is disabled. Note that the bootstrapped results are
+fully reproducible for all cluster sizes. The progress of the bootstrap can
+be observed in the R console, where a progress bar and the estimated
+remaining time are displayed for \code{pb = TRUE}.
 
 If the argument \code{export.error} is set to \code{TRUE}, the output of
 the function is a list instead of a matrix with additional information on
@@ -225,7 +235,11 @@ Within this function, the \code{\link[stats]{arima}} function of the
 for the estimation of ARMA models. Furthermore, to increase the performance,
 C++ code via the \code{\link[Rcpp:Rcpp-package]{Rcpp}} and
 \code{\link[RcppArmadillo:RcppArmadillo-package]{RcppArmadillo}} packages was
-implemented.
+implemented. Also, the \code{\link[future:multisession]{future}} and
+\code{\link[future.apply:future.apply-package]{future.apply}} packages are
+considered for parallel computation of bootstrap iterations. The progress
+of the bootstrap is shown via the
+\code{\link[progressr:progressr-package]{progressr}} package.
 }
 \examples{
 ### Example 1: Simulated ARMA process ###
@@ -245,17 +259,17 @@ X <- arima.sim(model = list(ar = c(1.2, -0.7), ma = 0.63), n = n,
 # Quick application with low number of iterations
 # (not recommended in practice)
 result <- bootCast(X = X, p = 2, q = 1, include.mean = TRUE,
- n.start = n.start, h = 5, it = 50, msg = 10, plot = TRUE,
+ n.start = n.start, h = 5, it = 10, cores = 2, plot = TRUE,
  lty = 3, col = "forestgreen", xlim = c(1950, 2005), type = "b",
- main = "Examplary title", pch = "*")
+ main = "Exemplary title", pch = "*")
 result
 
 ### Example 2: Application with more iterations ###
 \dontrun{
 result2 <- bootCast(X = X, p = 2, q = 1, include.mean = TRUE,
- n.start = n.start, h = 5, it = 10000, msg = 1000, plot = TRUE,
+ n.start = n.start, h = 5, it = 10000, cores = 2, plot = TRUE,
  lty = 3, col = "forestgreen", xlim = c(1950, 2005),
- main = "Examplary title")
+ main = "Exemplary title")
 result2
 
 }
