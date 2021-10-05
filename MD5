@@ -1,10 +1,10 @@
-f9304645e6ed23e74e7596071a7481c1 *DESCRIPTION
-8c96fd6693cc3a2aa292d88e1c523e7f *NAMESPACE
-58f0d65d1c09f516923904b7d7e607fd *NEWS.md
+c394c538b58f4d33e98a352b662bd996 *DESCRIPTION
+2f7200390ae9dd156804e520fca15e30 *NAMESPACE
+0b7333aee73a59a8e1d44ecbb82b3f7a *NEWS.md
 c001e260438846fd19728612bae5756f *R/RcppExports.R
 8c2ebbbd005580bb21815d1180528500 *R/Welcome.R
 8538a1f0400f10288d53372baa3d5a0c *R/algorithms.R
-cef60a5b16d64eac7252a508cf7cdbda *R/bootCast.R
+57c2d47a731b97c0975fa4a4282611ce *R/bootCast.R
 1a17bfee0df6ceb54a5d65b77fe402ba *R/cf0.LW.est.R
 08552a9ca0eb58f42405df74f3bd2fe9 *R/col.alpha.R
 9edf0908fe96f97386761f7cdcd88709 *R/color.name.R
@@ -81,5 +81,5 @@ a65de8e8f5b8e692826f4a7bea73d651 *src/bootCast.cpp
 60b607c1828c701ce8468f5d3a8a7188 *src/cf0.cpp
 cf26ce1c4d05dd7e46e20e44ab25d6b4 *src/gsmoothCpp.cpp
 2bd12807261015546f93034ec5222caa *tests/testthat.R
-a4bf25d89b19e49cd09ee3aed775accb *tests/testthat/test_bootCast_parallel.R
+aa55ea2f1152edaef3367e9dd54b64dc *tests/testthat/test_bootCast_parallel.R
 d5e9f9653f700456bc90169aaf9a9a5b *tests/testthat/test_smoots_algorithm.R

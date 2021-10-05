@@ -214,6 +214,7 @@
 #'@importFrom future plan sequential multisession
 #'@importFrom future.apply future_lapply
 #'@importFrom progressr progressor with_progress handler_progress
+#'@importFrom progress progress_bar
 #'
 #'@references
 #' Feng, Y., Gries, T. and Fritz, M. (2020). Data-driven

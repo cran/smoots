@@ -1,3 +1,10 @@
+# smoots 1.1.2
+- a NAMESPACE issue (stated as a NOTE in CRAN checks) regarding the package
+  'progress' has been fixed.
+- an ERROR that occurred when running the test files on aarch64-apple-darwin20
+  (64-bit), r-patched-solaris-x86 and x86_64-pc-linux-gnu (64-bit) has been 
+  fixed.
+
 # smoots 1.1.1
 
 - a minor bug in the automatically created plot title when applying 
