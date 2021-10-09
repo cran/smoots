@@ -1,3 +1,9 @@
+# smoots 1.1.3
+- a bug has been fixed that occurred when selecting p = 0 or q = 0
+  for the bootstrap approach
+- a bug has been fixed where using the deprecated argument msg in the function
+  rollCast() caused an error
+
 # smoots 1.1.2
 - a NAMESPACE issue (stated as a NOTE in CRAN checks) regarding the package
   'progress' has been fixed.

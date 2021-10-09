@@ -472,7 +472,7 @@ bootSetup <- function(X, p, q, include.mean, h, n.start) {
     mu <- coefs[["intercept"]]
   }
   rm(coefs)
-  X.fcast <- c(fcastCpp(X, innov, ar, ma, mu, h))
+  X.fcast <- c(fcastCpp(X, innov, ar.t, ma.t, mu, h))
 
   ar.star <- 0
   ma.star <- 0

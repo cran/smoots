@@ -394,7 +394,7 @@ rollCast <- function(y, p = NULL, q = NULL, K = 5, method = c("norm", "boot"),
     fcastErr <- NULL
   } else {
     fcastModel <- bootCast(X = np.est[["res"]], p = p, q = q, h = 1,
-      alpha = alpha, it = it, n.start = n.start, msg, pb = pb,
+      alpha = alpha, it = it, n.start = n.start, msg = msg, pb = pb,
       cores = cores, export.error = TRUE, plot = FALSE)
     fcastErr <- c(fcastModel[["error"]])
     quants <- quantile(fcastErr, probs = c(alpha.s / 2, 1 - alpha.s / 2))
