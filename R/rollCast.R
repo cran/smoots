@@ -45,9 +45,6 @@
 #'of observations for the simulated ARMA series via bootstrap; is set to
 #'\code{1000} by default; only necessary, if \code{method = "boot"};decimal
 #'numbers will be rounded off to integers.
-#'@param msg this argument is deprecated; make use of the argument \code{pb}
-#'instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
-#'any one-element numeric vector will lead to \code{pb = TRUE}.
 #'@param pb a logical value; for \code{pb = TRUE}, a progress bar will be shown
 #'in the console, if \code{method = "boot"}.
 #'@param cores an integer value >0 that states the number of (logical) cores to
@@ -302,7 +299,7 @@
 
 rollCast <- function(y, p = NULL, q = NULL, K = 5, method = c("norm", "boot"),
   alpha = 0.95, np.fcast = c("lin", "const"), it = 10000, n.start = 1000,
-  msg, pb = TRUE, cores = future::availableCores(),
+  pb = TRUE, cores = future::availableCores(),
   argsSmoots = list(), plot = TRUE, argsPlot = list()) {
 
   if (length(y) <= 1 || !all(!is.na(y)) || !is.numeric(y)) {
@@ -394,7 +391,7 @@ rollCast <- function(y, p = NULL, q = NULL, K = 5, method = c("norm", "boot"),
     fcastErr <- NULL
   } else {
     fcastModel <- bootCast(X = np.est[["res"]], p = p, q = q, h = 1,
-      alpha = alpha, it = it, n.start = n.start, msg = msg, pb = pb,
+      alpha = alpha, it = it, n.start = n.start, pb = pb,
       cores = cores, export.error = TRUE, plot = FALSE)
     fcastErr <- c(fcastModel[["error"]])
     quants <- quantile(fcastErr, probs = c(alpha.s / 2, 1 - alpha.s / 2))

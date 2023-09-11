@@ -13,7 +13,6 @@ modelCast(
   alpha = 0.95,
   it = 10000,
   n.start = 1000,
-  msg,
   pb = TRUE,
   cores = future::availableCores(),
   np.fcast = c("lin", "const"),
@@ -69,10 +68,6 @@ numbers will be rounded off to integers.}
 of observations for the simulated ARMA series via bootstrap; is set to
 \code{1000} by default; only necessary, if \code{method = "boot"};decimal
 numbers will be rounded off to integers.}
-
-\item{msg}{this argument is deprecated; make use of the argument \code{pb}
-instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
-any one-element numeric vector will lead to \code{pb = TRUE}.}
 
 \item{pb}{a logical value; for \code{pb = TRUE}, a progress bar will be shown
 in the console, if \code{method = "boot"}.}

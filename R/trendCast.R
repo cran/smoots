@@ -118,7 +118,7 @@
 trendCast <- function(object, h = 1, np.fcast = c("lin", "const"),
   plot = FALSE, ...) {
 
-  if (class(object) != "smoots") {
+  if (!inherits(object, "smoots")) {
     stop("Input object not of class 'smoots'.")
   }
   if (attr(object, "function") %in% c("dsmooth", "confBounds")) {

@@ -164,7 +164,7 @@ confBounds <- function(obj, alpha = 0.95, p = c(0, 1, 2, 3), plot = TRUE,
                 showPar = TRUE, rescale = TRUE, ...) {
 
   # The plot is defined by the input object of class "smoots"
-  if (class(obj) != "smoots") {
+  if (!inherits(obj, "smoots")) {
     stop("Input object 'obj' not recognized. It needs to be of class",
       " 'smoots'.")
   }

@@ -12,7 +12,6 @@ bootCast(
   n.start = 1000,
   h = 1,
   it = 10000,
-  msg,
   pb = TRUE,
   cores = future::availableCores(),
   alpha = 0.95,
@@ -57,10 +56,6 @@ obtained for the time points \eqn{n + 1} to \eqn{n + h}; is set to
 \item{it}{an integer that represents the total number of iterations, i.e.,
 the number of simulated series; is set to \code{10000} by default; decimal
 numbers will be rounded off to integers.}
-
-\item{msg}{this argument is deprecated; make use of the argument \code{pb}
-instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
-any one-element numeric vector will lead to \code{pb = TRUE}.}
 
 \item{pb}{a logical value; for \code{pb = TRUE}, a progress bar will be shown
 in the console.}

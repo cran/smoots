@@ -1,3 +1,14 @@
+# smoots 1.1.4
+- The NOTE "Specified C++11: please drop specification unless essential"
+  has been fixed.
+- a package alias has been added appropriately in the package overview
+  help file.
+- the plot functionality for objects of class "smoots" is no longer 
+  only interactive but different plot types can now also be selected
+  via a function argument.
+- the long-time deprecated argument "msg" in "bootCast()", "modelCast()",
+  and "rollCast()" has been removed.
+
 # smoots 1.1.3
 - a bug has been fixed that occurred when selecting p = 0 or q = 0
   for the bootstrap approach

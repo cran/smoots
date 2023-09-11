@@ -113,7 +113,7 @@ ARMA(\eqn{p,q}) model when estimating the variance factor via
 autoregressive-moving-average models (if calculated; calculated for
 \code{alg = "OAM"} and \code{alg = "NAM"}).}
 \item{cb}{the percentage of omitted observations on each side of the
-observation period; always equal to 0.05.}
+observation period.}
 \item{b0}{the optimal bandwidth chosen by the IPI-algorithm.}
 \item{bb}{the boundary bandwidth method used within the IPI; always equal to
 1.}

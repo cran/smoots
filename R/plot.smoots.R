@@ -10,6 +10,14 @@
 #'@param rescale a single logical value; is set to \code{TRUE} by default;
 #'if the output of a derivative estimation process is passed to \code{x} and if
 #'\code{rescale = TRUE}, the estimates will be rescaled according to \code{t}.
+#'@param which a selector for the plot type so that the interactive prompt is
+#'avoided; for the default, \code{which = NULL}, the user will be asked
+#'interactively via the console which plot to show; to avoid this behavior,
+#'set \code{which} to the corresponding number of the plot you would like
+#'to create (1: original series, 2: trend series, 3: residual series,
+#'4: original series with trend series for trend estimation objects,
+#'1: original series, 2: derivative series for trend derivative estimation
+#'object).
 #'@param ... additional arguments of the standard plot method.
 #'
 #'@export
@@ -27,28 +35,33 @@
 #'}
 #'
 
-plot.smoots <- function(x, t = NULL, rescale = TRUE, ...) {
+plot.smoots <- function(x, t = NULL, rescale = TRUE, which = NULL, ...) {
 
-#  oldpar <- par(no.readonly = TRUE)  # old version
-#  par(mfrow = c(1, 1))
-#  on.exit(par(oldpar))
+
+
   dots <- list(...)
   dots[["x"]] <- t
   dots[["y"]] <- x
+  plot_choice <- which
   if (attr(dots$y, "function") == "msmooth" |
       attr(dots$y, "function") == "tsmooth" |
       attr(dots$y, "function") == "knsmooth" |
       (attr(dots$y, "function") == "gsmooth" && dots[["y"]]$v == 0)) {
-    cat("Plot choices for smoots object:", fill = TRUE)
-    choices <- c(1, 2, 3, 4)
-    choice_names <- c("Original series:", "Trend series:", "Residual series:",
+
+    if (is.null(plot_choice)) {
+
+      cat("Plot choices for smoots object:", fill = TRUE)
+      choices <- c(1, 2, 3, 4)
+      choice_names <- c("Original series:", "Trend series:", "Residual series:",
                       "Original with trend series:")
-    choices_df <- data.frame(choices)
-    colnames(choices_df) <- ""
-    rownames(choices_df) <- choice_names
-    print.data.frame(choices_df)
-    plot_choice <- readline(prompt="Please enter the corresponding number: ")
-    plot_choice <- as.numeric(plot_choice)
+      choices_df <- data.frame(choices)
+      colnames(choices_df) <- ""
+      rownames(choices_df) <- choice_names
+      print.data.frame(choices_df)
+      plot_choice <- readline(prompt="Please enter the corresponding number: ")
+      plot_choice <- as.numeric(plot_choice)
+
+    }
 
     if (plot_choice == 1) {
       if (is.null(dots[["main"]])) {
@@ -183,15 +196,19 @@ plot.smoots <- function(x, t = NULL, rescale = TRUE, ...) {
              (attr(dots[["y"]], "function") == "gsmooth" &&
               dots[["y"]]$v > 0)) {
 
-    cat("Plot choices for smoots object:", fill = TRUE)
-    choices <- c(1, 2)
-    choice_names <- c("Original series:", "Derivative series:")
-    choices_df <- data.frame(choices)
-    colnames(choices_df) <- ""
-    rownames(choices_df) <- choice_names
-    print.data.frame(choices_df)
-    plot_choice <- readline(prompt="Please enter the corresponding number: ")
-    plot_choice <- as.numeric(plot_choice)
+    if (is.null(plot_choice)) {
+
+      cat("Plot choices for smoots object:", fill = TRUE)
+      choices <- c(1, 2)
+      choice_names <- c("Original series:", "Derivative series:")
+      choices_df <- data.frame(choices)
+      colnames(choices_df) <- ""
+      rownames(choices_df) <- choice_names
+      print.data.frame(choices_df)
+      plot_choice <- readline(prompt="Please enter the corresponding number: ")
+      plot_choice <- as.numeric(plot_choice)
+
+    }
 
     if (plot_choice == 1) {
       if (is.null(dots[["main"]])) {

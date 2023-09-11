@@ -42,9 +42,6 @@
 #'of observations for the simulated ARMA series via bootstrap; is set to
 #'\code{1000} by default; only necessary, if \code{method = "boot"};decimal
 #'numbers will be rounded off to integers.
-#'@param msg this argument is deprecated; make use of the argument \code{pb}
-#'instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
-#'any one-element numeric vector will lead to \code{pb = TRUE}.
 #'@param pb a logical value; for \code{pb = TRUE}, a progress bar will be shown
 #'in the console, if \code{method = "boot"}.
 #'@param cores an integer value >0 that states the number of (logical) cores to
@@ -280,11 +277,11 @@
 
 modelCast <- function(obj, p = NULL, q = NULL, h = 1,
   method = c("norm", "boot"), alpha = 0.95, it = 10000, n.start = 1000,
-  msg, pb = TRUE, cores = future::availableCores(),
+  pb = TRUE, cores = future::availableCores(),
   np.fcast = c("lin", "const"), export.error = FALSE, plot = FALSE,
   ...) {
 
-  if (class(obj) != "smoots" || !(attr(obj, "function") %in% c("msmooth",
+  if (!inherits(obj, "smoots") || !(attr(obj, "function") %in% c("msmooth",
     "tsmooth", "gsmooth", "knsmooth")) ||
     (attr(obj, "function") == "gsmooth" && obj$v != 0)) {
     stop("The argument 'obj' must be an object of class 'smoots' and the result
@@ -323,11 +320,11 @@ modelCast <- function(obj, p = NULL, q = NULL, h = 1,
       h = h, alpha = alpha, plot = FALSE)
   } else if (method == "boot" && export.error == FALSE) {
     FI <- bootCast(X = X, p, q, include.mean = FALSE,
-      n.start = n.start, h = h, it = it, alpha = alpha, msg = msg, pb = pb,
+      n.start = n.start, h = h, it = it, alpha = alpha, pb = pb,
       cores = cores, export.error = FALSE, plot = FALSE)
   } else if (method == "boot" && export.error == TRUE) {
     bootCalculation <- bootCast(X = X, p, q, include.mean = FALSE,
-      n.start = n.start, h = h, it = it, alpha = alpha, msg = msg, pb = pb,
+      n.start = n.start, h = h, it = it, alpha = alpha, pb = pb,
       cores = cores, export.error = TRUE, plot = FALSE)
     FI <- bootCalculation[["fcast"]]
   }

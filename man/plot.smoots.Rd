@@ -4,7 +4,7 @@
 \alias{plot.smoots}
 \title{Plot Method for the Package 'smoots'}
 \usage{
-\method{plot}{smoots}(x, t = NULL, rescale = TRUE, ...)
+\method{plot}{smoots}(x, t = NULL, rescale = TRUE, which = NULL, ...)
 }
 \arguments{
 \item{x}{an input object of class \code{smoots}.}
@@ -16,6 +16,15 @@ the x-axis within the plot; is set to NULL by default and uses a vector
 \item{rescale}{a single logical value; is set to \code{TRUE} by default;
 if the output of a derivative estimation process is passed to \code{x} and if
 \code{rescale = TRUE}, the estimates will be rescaled according to \code{t}.}
+
+\item{which}{a selector for the plot type so that the interactive prompt is
+avoided; for the default, \code{which = NULL}, the user will be asked
+interactively via the console which plot to show; to avoid this behavior,
+set \code{which} to the corresponding number of the plot you would like
+to create (1: original series, 2: trend series, 3: residual series,
+4: original series with trend series for trend estimation objects,
+1: original series, 2: derivative series for trend derivative estimation
+object).}
 
 \item{...}{additional arguments of the standard plot method.}
 }

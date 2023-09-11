@@ -1,7 +1,7 @@
 Package: smoots
 Type: Package
 Title: Nonparametric Estimation of the Trend and Its Derivatives in TS
-Version: 1.1.3
+Version: 1.1.4
 Description: The nonparametric trend and its derivatives in equidistant time 
     series (TS) with short-memory stationary errors can be estimated. The 
     estimation is conducted via local polynomial regression using an 
@@ -15,7 +15,7 @@ Description: The nonparametric trend and its derivatives in equidistant time
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Imports: stats, utils, graphics, grDevices, Rcpp (>= 1.0.7), future (>=
         1.22.1), future.apply (>= 1.8.1), progressr (>= 0.8.0),
         progress (>= 1.2.2)
@@ -51,7 +51,7 @@ Acknowledgments: This work was supported by the German DFG project
         GZ-FE-1500-2-1.
 Config/testthat/edition: 3
 NeedsCompilation: yes
-Packaged: 2021-10-08 12:28:20 UTC; Dominik Schulz
+Packaged: 2023-09-11 08:10:03 UTC; Dominik Schulz
 Author: Yuanhua Feng [aut] (Paderborn University, Germany),
   Sebastian Letmathe [aut] (Paderborn University, Germany),
   Dominik Schulz [aut, cre] (Paderborn University, Germany),
@@ -59,4 +59,4 @@ Author: Yuanhua Feng [aut] (Paderborn University, Germany),
   Marlon Fritz [ctb] (Paderborn University, Germany)
 Maintainer: Dominik Schulz <schulzd@mail.uni-paderborn.de>
 Repository: CRAN
-Date/Publication: 2021-10-09 21:10:02 UTC
+Date/Publication: 2023-09-11 08:50:02 UTC

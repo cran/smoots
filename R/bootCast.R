@@ -33,9 +33,6 @@
 #'@param it an integer that represents the total number of iterations, i.e.,
 #'the number of simulated series; is set to \code{10000} by default; decimal
 #'numbers will be rounded off to integers.
-#'@param msg this argument is deprecated; make use of the argument \code{pb}
-#'instead; for \code{msg = NA}, \code{pb = TRUE} will be implemented, while
-#'any one-element numeric vector will lead to \code{pb = TRUE}.
 #'@param pb a logical value; for \code{pb = TRUE}, a progress bar will be shown
 #'in the console.
 #'@param cores an integer value >0 that states the number of (logical) cores to
@@ -277,7 +274,7 @@
 #'}
 
 bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
-  n.start = 1000, h = 1, it = 10000, msg, pb = TRUE,
+  n.start = 1000, h = 1, it = 10000, pb = TRUE,
   cores = future::availableCores(), alpha = 0.95,
   export.error = FALSE, plot = FALSE, ...) {
 
@@ -315,21 +312,7 @@ bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
     stop("The argument 'it' must be a single positive integer value.")
   }
   it <- floor(it)
-  if (!missing(msg)) {
-    warning("The argument 'msg' is deprecated. Please make use of ",
-     "the argument 'pb' instead.", call. = FALSE)
 
-    if (!is.null(msg) && length(msg) == 1 && (is.na(msg) || is.numeric(msg))) {
-      if (is.na(msg)) {
-        pb <- FALSE
-      } else {
-        pb <- TRUE
-      }
-    } else {
-      stop("The argument 'msg' must be a one-element numeric vector or NA.")
-    }
-
-  }
   if (length(pb) != 1 || is.na(pb) || !is.logical(pb)) {
     stop("The argument 'pb' must be a single logical value.")
   }

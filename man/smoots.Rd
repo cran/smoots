@@ -3,6 +3,7 @@
 \docType{package}
 \name{smoots}
 \alias{smoots}
+\alias{smoots-package}
 \title{smoots: A package for data-driven nonparametric estimation of the trend and
 its derivatives in equidistant time series.}
 \description{

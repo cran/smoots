@@ -161,13 +161,14 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
   if (method == "lpr") {
     est.opt <- gsmoothCalc2Cpp(y, 0, p, mu, bopt, bb)
     ye <- c(est.opt$ye)
+    attributes(ye) <- attributes(y)
     results[["ws"]] <- est.opt$ws
     res <- y - ye
     attr(results, "method") = "lpr"
   } else if (method == "kr") {
     est.opt <- knsmooth(y, mu, bopt, bb)
-    ye <- c(est.opt$ye)
     res <- est.opt$res
+    ye <- est.opt$ye
     attr(results, "method") = "kr"
   }
   results[["ye"]] <- ye

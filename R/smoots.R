@@ -137,6 +137,7 @@
 #'
 #' @docType package
 #' @name smoots
+#' @aliases smoots-package
 #' @useDynLib smoots
 #' @importFrom Rcpp sourceCpp
 NULL
