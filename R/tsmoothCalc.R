@@ -2,7 +2,9 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
                     Mcf = c("NP", "ARMA", "AR", "MA"),
                     InfR = c("Opt", "Nai", "Var"), bStart = 0.15,
                     bvc = c("Y", "N"), bb = c(0, 1), cb = 0.05,
-                    method = c("lpr", "kr")) {
+                    method = c("lpr", "kr"),
+                    nar_lim = c(0, 1),
+                    nma_lim = c(0, 1), arma_mean = TRUE) {
 
   # using the knn idea, bb=1, or not
   # cb=x, 0, 0.025 or 0.05, x*n obs at each end not be used for choosing b
@@ -11,8 +13,11 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
   n <- length(y)
   k <- p + 1
   pd <- p + 2
-  runc <- 1
   n1 <- trunc(n * cb)
+  nar_min <- nar_lim[[1]]
+  nar_max <- nar_lim[[2]]
+  nma_min <- nma_lim[[1]]
+  nma_max <- nma_lim[[2]]
 
   # New method for the kernel constants with p = 1 or 3
   # Kernel constants
@@ -35,6 +40,8 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
   c1 <- factorial(k)^2 / (2 * k)
   c2 <- (1 - 2 * cb) * Rp / (mukp)^2
 
+  # The main iteration------------------------------------------------------
+
   steps <- rep(NA, 40)
   p.char <- as.character(p)
   bd_func <- lookup$InfR_lookup[[p.char, InfR]]
@@ -42,9 +49,9 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
   expo1 <- lookup$expon1[[p.char]]
   expo2 <- lookup$expon2[[p.char]]
 
-  # The main iteration------------------------------------------------------
-
   noi <- 40  # maximal number of iterations
+
+  runc <- 1
 
   for (i in 1:noi) {
     if (runc == 1) {
@@ -90,7 +97,9 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
         p.BIC <- NA
         q.BIC <- NA
       } else if (Mcf == "ARMA") {
-        cf0.ARMA.est <- cf0.ARMA.est(yd)
+        cf0.ARMA.est <- cf0.ARMA.est(yd, nar_max = nar_max, nma_max = nma_max,
+                                     nar_min = nar_min, nma_min = nma_min,
+                                     arma_mean = arma_mean)
         cf0.ARMA <- cf0.ARMA.est$cf0.ARMA
         cf0.AR <- NA
         cf0.MA <- NA
@@ -103,7 +112,8 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
         cf0.LW <- NA
         L0.opt <- NA
       } else if (Mcf == "AR") {
-        cf0.AR.est <- cf0.AR.est(yd)  # [(n1+1):(n-n1)])
+        cf0.AR.est <- cf0.AR.est(yd, nar_max = nar_max, nar_min = nar_min,
+                                 arma_mean = arma_mean)  # [(n1+1):(n-n1)])
         cf0.AR <- cf0.AR.est$cf0.AR
         cf0 <- cf0.AR
         cf0.LW <- NA
@@ -116,7 +126,8 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
         q.BIC <- NA
         L0.opt <- NA
       } else if (Mcf == "MA") {
-        cf0.MA.est <- cf0.MA.est(yd)
+        cf0.MA.est <- cf0.MA.est(yd, nma_max = nma_max, nma_min = nma_min,
+                                 arma_mean = arma_mean)
         cf0.MA <- cf0.MA.est$cf0.MA
         cf0 <- cf0.MA
         cf0.LW <- NA
@@ -175,3 +186,5 @@ tsmoothCalc <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
   results[["res"]] <- res
   results
 }
+
+

@@ -19,26 +19,38 @@ export(rollCast)
 export(trendCast)
 export(tsmooth)
 importFrom(Rcpp,sourceCpp)
-importFrom(future,multisession)
-importFrom(future,plan)
-importFrom(future,sequential)
+importFrom(future,
+  multisession,
+  plan,
+  sequential
+)
 importFrom(future.apply,future_lapply)
-importFrom(grDevices,col2rgb)
-importFrom(grDevices,colors)
-importFrom(grDevices,rgb)
-importFrom(graphics,lines)
-importFrom(graphics,points)
-importFrom(graphics,polygon)
+importFrom(grDevices,
+  col2rgb,
+  colors,
+  rgb
+)
+importFrom(graphics,
+  lines,
+  points,
+  polygon
+)
 importFrom(progress,progress_bar)
-importFrom(progressr,handler_progress)
-importFrom(progressr,progressor)
-importFrom(progressr,with_progress)
-importFrom(stats,arima)
-importFrom(stats,arima.sim)
-importFrom(stats,as.formula)
-importFrom(stats,lm)
-importFrom(stats,qnorm)
-importFrom(stats,quantile)
-importFrom(utils,head)
-importFrom(utils,tail)
+importFrom(progressr,
+  handler_progress,
+  progressor,
+  with_progress
+)
+importFrom(stats,
+  arima,
+  arima.sim,
+  as.formula,
+  lm,
+  qnorm,
+  quantile
+)
+importFrom(utils,
+  head,
+  tail
+)
 useDynLib(smoots)

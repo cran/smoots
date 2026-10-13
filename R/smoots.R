@@ -121,23 +121,21 @@
 #' local polynomial for the trend and its derivatives in economic time
 #' series. Journal of Nonparametric Statistics, 32:2, 510-533.
 #'
-#' Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
-#' in R for semiparametric modeling of trend stationary time series. Discussion
-#' Paper. Paderborn University. Unpublished.
+#' Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2022). The smoots package
+#' in R for semiparametric modeling of trend stationary time series. The R
+#' Journal, 14:1, 182-195.
 #'
 #'@author
 #'\itemize{
 #'\item Yuanhua Feng (Department of Economics, Paderborn University), \cr
 #'Author of the Algorithms \cr
-#'Website: \url{https://wiwi.uni-paderborn.de/en/dep4/feng/}
-#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'\item Dominik Schulz (formerly Department of Economics, Paderborn
 #'University), \cr
 #'Package Creator and Maintainer
 #'}
 #'
 #' @docType package
-#' @name smoots
-#' @aliases smoots-package
+#' @name smoots-package
 #' @useDynLib smoots
 #' @importFrom Rcpp sourceCpp
-NULL
+"_PACKAGE"

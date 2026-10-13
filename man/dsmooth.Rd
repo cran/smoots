@@ -148,7 +148,7 @@ the time series' nonparametric trend (\eqn{\nu = 0}) with polynomial order
 \eqn{p_p}. The estimate is then plugged into the iterative procedure for
 estimating the first or second derivative (\eqn{\nu = 1} or \eqn{\nu = 2}).
 For further details on the asymptotic theory or the algorithm, we refer the
-user to Feng, Fritz and Gries (2020) and Feng et al. (2019).
+user to Feng, Fritz and Gries (2020) and Feng et al. (2022).
 
 The function itself is applicable in the following way: Based on a data input
 \code{y}, an order of polynomial \code{pp} for the variance factor estimation
@@ -225,16 +225,15 @@ Feng, Y., Gries, T. and Fritz, M. (2020). Data-driven
 local polynomial for the trend and its derivatives in economic time
 series. Journal of Nonparametric Statistics, 32:2, 510-533.
 
-Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
-in R for semiparametric modeling of trend stationary time series. Discussion
-Paper. Paderborn University. Unpublished.
+Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2022). The smoots package
+in R for semiparametric modeling of trend stationary time series. The R
+Journal, 14:1, 182-195.
 }
 \author{
 \itemize{
 \item Yuanhua Feng (Department of Economics, Paderborn University), \cr
-Author of the Algorithms \cr
-Website: \url{https://wiwi.uni-paderborn.de/en/dep4/feng/}
-\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+Author of the Algorithms
+\item Dominik Schulz (formerly Department of Economics, Paderborn
 University), \cr
 Package Creator and Maintainer
 }

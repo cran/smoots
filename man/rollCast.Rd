@@ -15,7 +15,7 @@ rollCast(
   it = 10000,
   n.start = 1000,
   pb = TRUE,
-  cores = future::availableCores(),
+  cores = max(future::availableCores() - 1, 1),
   argsSmoots = list(),
   plot = TRUE,
   argsPlot = list()
@@ -78,7 +78,7 @@ in the console, if \code{method = "boot"}.}
 
 \item{cores}{an integer value >0 that states the number of (logical) cores to
 use in the bootstrap (or \code{NULL}); the default is the maximum number of
-available cores
+available cores minus 1
 (via \code{\link[future:availableCores]{future::availableCores}}); for
 \code{cores = NULL}, parallel computation is disabled.}
 
@@ -319,8 +319,7 @@ with unknown orders. REVSTAT–Statistical Journal, 18:3, 375-396.
 \itemize{
 \item Yuanhua Feng (Department of Economics, Paderborn University), \cr
 Author of the Algorithms \cr
-Website: \url{https://wiwi.uni-paderborn.de/en/dep4/feng/}
-\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+\item Dominik Schulz (formerly Department of Economics, Paderborn
 University), \cr
 Package Creator and Maintainer
 }

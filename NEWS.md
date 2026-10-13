@@ -1,5 +1,17 @@
+# smoots 1.1.5
+- further options are enabled in the data-driven bandwidth selection. 
+  "msmooth()" and "tsmooth()" now have additional arguments for when an ARMA 
+  model is already assumed in the bandwidth selection process: nar_lim, nma_lim, 
+  and arma_mean.
+- for "modelCast()", "rollCast()", and "bootCast()", the default of the argument
+  "cores" was adjusted to the maximum of available cores minus 1, while
+  also ensuring that it cannot go below 1.
+- citation information was updated available via `citation("smoots")`.
+- change in maintainer mail address from schulzd@mail.uni-paderborn.de to
+  dominik.schulz.r@gmail.com; the maintainer is, however, still the same person.
+
 # smoots 1.1.4
-- The NOTE "Specified C++11: please drop specification unless essential"
+- the NOTE "Specified C++11: please drop specification unless essential"
   has been fixed.
 - a package alias has been added appropriately in the package overview
   help file.

@@ -1,0 +1,42 @@
+bibentry(
+  bibtype = "Article",
+  title = "The smoots Package in R for Semiparametric Modeling of Trend Stationary Time Series",
+  author = c(
+    person("Yuanhua", "Feng", role = "aut"),
+    person("Thomas", "Gries", role = "aut"),
+    person("Sebastian", "Letmathe", role = "aut"),
+    person("Dominik", "Schulz", role = "aut")
+  ),
+  journal = "The R Journal",
+  year = "2022",
+  volume = "14",
+  number = "1",
+  pages = "182-195",
+  doi = "10.32614/RJ-2022-017",
+
+  textVersion = paste0(
+    "To cite the methodology or journal article, please use:\n\n",
+    "Feng, Y., Gries, T., Letmathe, S., and Schulz, D. (2022). ",
+    "The smoots Package in R for Semiparametric Modeling of Trend ",
+    "Stationary Time Series. The R Journal, 14(1), 182-195. ",
+    "DOI:10.32614/RJ-2022-017."
+  )
+)
+
+
+bibentry(
+  bibtype = "Manual",
+  title = "smoots: Nonparametric Estimation of the Trend and Its Derivatives in TS",
+  author = as.person(meta$Author),
+  year = "2026",
+  note = paste0("R package version ", meta$Version),
+  doi = "10.32614/CRAN.package.smoots",
+
+  textVersion = paste0(
+    "To cite the specific software version/manual, please use:\n\n",
+    "Feng, Y., Letmathe, S., and Schulz, D. (2026). ",
+    "smoots: Nonparametric Estimation of the Trend and Its Derivatives in TS. ",
+    "R package version ", meta$Version, ". ",
+    "DOI: 10.32614/CRAN.package.smoots."
+  )
+)

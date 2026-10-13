@@ -1,7 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# smoots
+# smoots <img src="man/figures/logo_smoots.png" align="right" height="139" alt="" />
+
+<!-- badges: start -->
+
+[![](https://www.r-pkg.org/badges/version/smoots?color=green)](https://cran.r-project.org/package=smoots)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/smoots?color=blue)](https://cran.r-project.org/package=smoots)
+[![](http://cranlogs.r-pkg.org/badges/last-month/smoots?color=green)](https://cran.r-project.org/package=smoots)
+[![License:
+GPL-3](https://img.shields.io/badge/license-GPL--3-yellow.svg)](https://cran.r-project.org/web/licenses/GPL-3)
+<!-- badges: end -->
 
 The goal of `smoots` is to provide an easy way to estimate the
 nonparametric trend and its derivatives in trend-stationary, equidistant
@@ -51,9 +60,9 @@ b.opt
 #> [1] 0.101089
 ```
 
-<img src="man/figures/README-plot1-1.png" width="100%" /><img src="man/figures/README-plot1-2.png" width="100%" />
+<img src="man/figures/README-plot1-1.png" alt="" width="100%" /><img src="man/figures/README-plot1-2.png" alt="" width="100%" />
 
-An optimal bandwidth of 0.101089 was selected by the iterative plug-in
+An optimal bandwidth of $0.101089$ was selected by the iterative plug-in
 algorithm (IPI) within `msmooth()`. Moreover, the estimated trend fits
 the data suitably and the residuals seem to be stationary. Since the
 trend was obtained without any parametric assumptions with respect to
@@ -89,7 +98,7 @@ forecast <- modelCast(results, p = 1, q = 1, h = 5, alpha = 0.95,
   xlab = "Exemplary x-axis label", ylab = "Exemplary y-axis label")
 ```
 
-<img src="man/figures/README-fcast-1.png" width="100%" />
+<img src="man/figures/README-fcast-1.png" alt="" width="100%" />
 
 ``` r
 forecast
@@ -123,7 +132,7 @@ simplicity. Moreover, a confidence level of 95% was chosen.
 bounds <- confBounds(results, alpha = 0.95, p = 1, x = time)
 ```
 
-<img src="man/figures/README-confbounds-1.png" width="100%" />
+<img src="man/figures/README-confbounds-1.png" alt="" width="100%" />
 
 ``` r
 bounds
@@ -155,29 +164,29 @@ In `smoots` fourteen functions are available.
 
 **Original functions since version 1.0.0:**
 
--   `dsmooth`: Data-driven Local Polynomial for the Trend’s Derivatives
-    in Equidistant Time Series
--   `gsmooth`: Estimation of Trends and their Derivatives via Local
-    Polynomial Regression
--   `knsmooth`: Estimation of Nonparametric Trend Functions via Kernel
-    Regression
--   `msmooth`: Data-driven Nonparametric Regression for the Trend in
-    Equidistant Time Series
--   `tsmooth`: Advanced Data-driven Nonparametric Regression for the
-    Trend in Equidistant Time Series
+- `dsmooth`: Data-driven Local Polynomial for the Trend’s Derivatives in
+  Equidistant Time Series
+- `gsmooth`: Estimation of Trends and their Derivatives via Local
+  Polynomial Regression
+- `knsmooth`: Estimation of Nonparametric Trend Functions via Kernel
+  Regression
+- `msmooth`: Data-driven Nonparametric Regression for the Trend in
+  Equidistant Time Series
+- `tsmooth`: Advanced Data-driven Nonparametric Regression for the Trend
+  in Equidistant Time Series
 
 **Newly introduced with version 1.1.0:**
 
--   `rescale`: Rescaling Derivative Estimates
--   `critMatrix`: ARMA Order Selection Matrix
--   `optOrd`: Optimal Order Selection
--   `normCast`: Forecasting Function for ARMA Models under Normally
-    Distributed Innovations
--   `bootCast`: Forecasting Function for ARMA Models via Bootstrap
--   `trendCast`: Forecasting Function for Nonparametric Trend Functions
--   `modelCast`: Forecasting Function for Trend-Stationary Time Series
--   `rollCast`: Backtesting Semi-ARMA Models with Rolling Forecasts
--   `confBounds`: Asymptotically Unbiased Confidence Bounds
+- `rescale`: Rescaling Derivative Estimates
+- `critMatrix`: ARMA Order Selection Matrix
+- `optOrd`: Optimal Order Selection
+- `normCast`: Forecasting Function for ARMA Models under Normally
+  Distributed Innovations
+- `bootCast`: Forecasting Function for ARMA Models via Bootstrap
+- `trendCast`: Forecasting Function for Nonparametric Trend Functions
+- `modelCast`: Forecasting Function for Trend-Stationary Time Series
+- `rollCast`: Backtesting Semi-ARMA Models with Rolling Forecasts
+- `confBounds`: Asymptotically Unbiased Confidence Bounds
 
 For further information on each of the functions, we refer the user to
 the manual or the package documentation.

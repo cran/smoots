@@ -3,7 +3,7 @@ est1 <- smoots::msmooth(Xt)
 est2 <- smoots::dsmooth(Xt)
 est3 <- smoots::dsmooth(Xt, d = 2)
 est4 <- smoots::tsmooth(Xt, p = 3, InfR = "Nai", mu = 3, bb = 0, Mcf = "AR",
-  bvc = "N")
+  nar_lim = c(0, 3), bvc = "N")
 est5 <- smoots::dsmooth(Xt, d = 2, mu = 3, pp = 3)
 b1 <- est1$b0
 b2 <- est2$b0

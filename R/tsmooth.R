@@ -79,6 +79,17 @@
 #'@param method the final smoothing approach; \code{"lpr"} represents the local
 #'polynomial regression, whereas \code{"kr"} implements a kernel regression;
 #'is set to \code{"lpr"} by default.
+#'@param nar_lim a two-element numeric vector with the minimum and the maximum
+#'AR order to check via BIC in the fitting of ARMA models, when the variance
+#'factor is obtained via fitted parametric ARMA models and not
+#'nonparametrically.
+#'@param nma_lim a two-element numeric vector with the minimum and the maximum
+#'MA order to check via BIC in the fitting of ARMA models, when the variance
+#'factor is obtained via fitted parametric ARMA models and not
+#'nonparametrically.
+#'@param arma_mean logical; whether to include the mean in the fitting of ARMA
+#'models, only if the variance factor is estimated via parametric ARMA models
+#'and not nonparametrically.
 #'
 #'@details
 #'
@@ -128,7 +139,7 @@
 #'more serves as an input for the following iteration. The process repeats
 #'until either convergence or the 40th iteration is reached. For further
 #'details on the asymptotic theory or the algorithm, please consult Feng, Gries
-#'and Fritz (2020) or Feng et al. (2019).
+#'and Fritz (2020) or Feng et al. (2022).
 #'
 #'To apply the function, more arguments are needed compared to the similar
 #'function \code{\link{msmooth}}: a data input \code{y}, an order of polynomial
@@ -272,16 +283,15 @@
 #' local polynomial for the trend and its derivatives in economic time
 #' series. Journal of Nonparametric Statistics, 32:2, 510-533.
 #'
-#' Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
-#' in R for semiparametric modeling of trend stationary time series. Discussion
-#' Paper. Paderborn University. Unpublished.
+#' Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2022). The smoots package
+#' in R for semiparametric modeling of trend stationary time series. The R
+#' Journal, 14:1, 182-195.
 #'
 #'@author
 #'\itemize{
 #'\item Yuanhua Feng (Department of Economics, Paderborn University), \cr
 #'Author of the Algorithms \cr
-#'Website: \url{https://wiwi.uni-paderborn.de/en/dep4/feng/}
-#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'\item Dominik Schulz (formerly Department of Economics, Paderborn
 #'University), \cr
 #'Package Creator and Maintainer
 #'}
@@ -351,7 +361,9 @@ tsmooth <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
                     Mcf = c("NP", "ARMA", "AR", "MA"),
                     InfR = c("Opt", "Nai", "Var"), bStart = 0.15,
                     bvc = c("Y", "N"), bb = c(0, 1), cb = 0.05,
-                    method = c("lpr", "kr")) {
+                    method = c("lpr", "kr"),
+                    nar_lim = c(0, 1),
+                    nma_lim = c(0, 1), arma_mean = TRUE) {
 
      # Input if no inputs were made to specific arguments
 
@@ -442,8 +454,14 @@ tsmooth <- function(y, p = c(1, 3), mu = c(0, 1, 2, 3),
        stop("Input of argument 'bb' incorrect. It must be either 0 or 1.")
      }
 
+     stopifnot("'nar_lim' must be a two-element numeric vector with two non-zero integers." = (is.numeric(nar_lim) && length(nar_lim) == 2 && nar_lim[[1]] <= nar_lim[[2]]))
+     stopifnot("'nma_lim' must be a two-element numeric vector with two non-zero integers." = (is.numeric(nma_lim) && length(nma_lim) == 2 && nma_lim[[1]] <= nma_lim[[2]]))
+     stopifnot("'arma_mean' must be a logical value." = (is.logical(arma_mean) && length(arma_mean) == 1))
+
+
      results <- tsmoothCalc(y = y, p = p, mu = mu, Mcf = Mcf, InfR = InfR,
-       bStart = bStart, bvc = bvc, bb = bb, cb = cb, method = method)
+       bStart = bStart, bvc = bvc, bb = bb, cb = cb, method = method,
+       nar_lim = nar_lim, nma_lim = nma_lim, arma_mean = arma_mean)
 
      class(results) <- "smoots"
      attr(results, "function") <- "tsmooth"

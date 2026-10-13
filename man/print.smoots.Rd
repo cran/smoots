@@ -21,7 +21,7 @@ printed.
 }
 \author{
 \itemize{
-\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+\item Dominik Schulz (formerly Department of Economics, Paderborn
 University), \cr
 Package Creator and Maintainer
 }

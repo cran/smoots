@@ -20,7 +20,7 @@ object. Both \code{fitted} and \code{fitted.values} can be called.
 }
 \author{
 \itemize{
-\item Sebastian Letmathe (Scientific Employee) (Department of Economics,
+\item Sebastian Letmathe (formerly Department of Economics,
 Paderborn University), \cr
 }
 }

@@ -11,7 +11,10 @@ msmooth(
   mu = c(0, 1, 2, 3),
   bStart = 0.15,
   alg = c("A", "B", "N", "NA", "NAM", "NM", "O", "OA", "OAM", "OM"),
-  method = c("lpr", "kr")
+  method = c("lpr", "kr"),
+  nar_lim = c(0, 1),
+  nma_lim = c(0, 1),
+  arma_mean = TRUE
 )
 }
 \arguments{
@@ -77,6 +80,20 @@ information on the components of the different algorithms, please consult
 \item{method}{the smoothing approach; \code{"lpr"} represents the local
 polynomial regression, whereas \code{"kr"} implements a kernel regression;
 is set to \code{"lpr"} by default.}
+
+\item{nar_lim}{a two-element numeric vector with the minimum and the maximum
+AR order to check via BIC in the fitting of ARMA models, when the variance
+factor is obtained via fitted parametric ARMA models and not
+nonparametrically.}
+
+\item{nma_lim}{a two-element numeric vector with the minimum and the maximum
+MA order to check via BIC in the fitting of ARMA models, when the variance
+factor is obtained via fitted parametric ARMA models and not
+nonparametrically.}
+
+\item{arma_mean}{logical; whether to include the mean in the fitting of ARMA
+models, only if the variance factor is estimated via parametric ARMA models
+and not nonparametrically.}
 }
 \value{
 The function returns a list with different components:
@@ -216,7 +233,7 @@ iteration, a bandwidth is obtained in accordance with the AMISE that once
 more serves as an input for the following iteration. The process repeats
 until either convergence or the 40th iteration is reached. For further
 details on the asymptotic theory or the algorithm, please consult Feng,
-Gries and Fritz (2020) or Feng et al. (2019).
+Gries and Fritz (2020) or Feng et al. (2022).
 
 To apply the function, only few arguments are needed: a data input \code{y},
 an order of polynomial \code{p}, a kernel function defined by the smoothness
@@ -331,16 +348,15 @@ Feng, Y., Gries, T. and Fritz, M. (2020). Data-driven
 local polynomial for the trend and its derivatives in economic time
 series. Journal of Nonparametric Statistics, 32:2, 510-533.
 
-Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
-in R for semiparametric modeling of trend stationary time series. Discussion
-Paper. Paderborn University. Unpublished.
+Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2022). The smoots package
+in R for semiparametric modeling of trend stationary time series. The R
+Journal, 14:1, 182-195.
 }
 \author{
 \itemize{
 \item Yuanhua Feng (Department of Economics, Paderborn University), \cr
 Author of the Algorithms \cr
-Website: \url{https://wiwi.uni-paderborn.de/en/dep4/feng/}
-\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+\item Dominik Schulz (formerly Department of Economics, Paderborn
 University), \cr
 Package Creator and Maintainer
 }

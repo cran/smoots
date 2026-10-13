@@ -13,7 +13,7 @@ bootCast(
   h = 1,
   it = 10000,
   pb = TRUE,
-  cores = future::availableCores(),
+  cores = max(future::availableCores() - 1, 1),
   alpha = 0.95,
   export.error = FALSE,
   plot = FALSE,
@@ -62,7 +62,7 @@ in the console.}
 
 \item{cores}{an integer value >0 that states the number of (logical) cores to
 use in the bootstrap (or \code{NULL}); the default is the maximum number of
-available cores
+available cores minus 1
 (via \code{\link[future:availableCores]{future::availableCores}}); for
 \code{cores = NULL}, parallel computation is disabled.}
 
@@ -274,13 +274,13 @@ Feng, Y., Gries, T. and Fritz, M. (2020). Data-driven
 local polynomial for the trend and its derivatives in economic time
 series. Journal of Nonparametric Statistics, 32:2, 510-533.
 
-Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
-in R for semiparametric modeling of trend stationary time series. Discussion
-Paper. Paderborn University. Unpublished.
+Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2022). The smoots package
+in R for semiparametric modeling of trend stationary time series. The R
+Journal, 14:1, 182-195.
 
-Feng, Y., Gries, T., Fritz, M., Letmathe, S. and Schulz, D. (2020).
+Feng, Y., Gries, T., Fritz, M., Letmathe, S. and Schulz, D. (2026).
 Diagnosing the trend and bootstrapping the forecasting intervals using a
-semiparametric ARMA. Discussion Paper. Paderborn University. Unpublished.
+semiparametric ARMA. CIE Working Paper Series (Paderborn University), 168.
 
 Lu, X., and Wang, L. (2020). Bootstrap prediction interval for ARMA models
 with unknown orders. REVSTAT–Statistical Journal, 18:3, 375-396.
@@ -291,7 +291,7 @@ Planning and Inference 177, pp. 1-27.
 }
 \author{
 \itemize{
-\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+\item Dominik Schulz (formerly Department of Economics, Paderborn
 University), \cr
 Package Creator and Maintainer
 }

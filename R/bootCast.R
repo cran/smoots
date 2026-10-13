@@ -37,7 +37,7 @@
 #'in the console.
 #'@param cores an integer value >0 that states the number of (logical) cores to
 #'use in the bootstrap (or \code{NULL}); the default is the maximum number of
-#'available cores
+#'available cores minus 1
 #'(via \code{\link[future:availableCores]{future::availableCores}}); for
 #'\code{cores = NULL}, parallel computation is disabled.
 #'@param alpha a numeric vector of length 1 with \eqn{0 < } \code{alpha}
@@ -218,13 +218,13 @@
 #' local polynomial for the trend and its derivatives in economic time
 #' series. Journal of Nonparametric Statistics, 32:2, 510-533.
 #'
-#' Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2019). The smoots package
-#' in R for semiparametric modeling of trend stationary time series. Discussion
-#' Paper. Paderborn University. Unpublished.
+#' Feng, Y., Gries, T., Letmathe, S. and Schulz, D. (2022). The smoots package
+#' in R for semiparametric modeling of trend stationary time series. The R
+#' Journal, 14:1, 182-195.
 #'
-#' Feng, Y., Gries, T., Fritz, M., Letmathe, S. and Schulz, D. (2020).
+#' Feng, Y., Gries, T., Fritz, M., Letmathe, S. and Schulz, D. (2026).
 #' Diagnosing the trend and bootstrapping the forecasting intervals using a
-#' semiparametric ARMA. Discussion Paper. Paderborn University. Unpublished.
+#' semiparametric ARMA. CIE Working Paper Series (Paderborn University), 168.
 #'
 #' Lu, X., and Wang, L. (2020). Bootstrap prediction interval for ARMA models
 #' with unknown orders. REVSTAT–Statistical Journal, 18:3, 375-396.
@@ -235,7 +235,7 @@
 #'
 #'@author
 #'\itemize{
-#'\item Dominik Schulz (Research Assistant) (Department of Economics, Paderborn
+#'\item Dominik Schulz (formerly Department of Economics, Paderborn
 #'University), \cr
 #'Package Creator and Maintainer
 #'}
@@ -275,7 +275,7 @@
 
 bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
   n.start = 1000, h = 1, it = 10000, pb = TRUE,
-  cores = future::availableCores(), alpha = 0.95,
+  cores = max(future::availableCores() - 1, 1), alpha = 0.95,
   export.error = FALSE, plot = FALSE, ...) {
 
   if (length(X) <= 1 || !all(!is.na(X)) || !is.numeric(X)) {
@@ -316,9 +316,11 @@ bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
   if (length(pb) != 1 || is.na(pb) || !is.logical(pb)) {
     stop("The argument 'pb' must be a single logical value.")
   }
-  if (!(length(cores) %in% c(0, 1)) || !(is.null(cores) || !is.na(cores) || is.numeric(cores))) {
-    stop("The argument 'cores' must be a single integer value.")
+
+  if (!(length(cores) %in% c(0, 1)) || !(is.null(cores) || (!is.na(cores) && is.numeric(cores) && cores >= 1))) {
+    stop("The argument 'cores' must be a single integer value > 0 or NULL.")
   }
+
   if (length(plot) != 1 || is.na(plot) || !plot %in% c(TRUE, FALSE)) {
     stop("The argument 'plot' must be a single logical value (TRUE or FALSE).")
   }
@@ -352,12 +354,13 @@ bootCast <- function(X, p = NULL, q = NULL, include.mean = FALSE,
   bootF <- bootSet[[1]]
   X.fcast <- bootSet[[2]]
   old.plan <- future::plan()
+
   if (is.null(cores)) {
     future::plan(future::sequential)
   } else {
     future::plan(future::multisession, workers = cores)
   }
-  on.exit(future::plan(old.plan))
+  on.exit(future::plan(old.plan), add = TRUE, after = TRUE)
 
   progressr::with_progress({
     if (pb) {
